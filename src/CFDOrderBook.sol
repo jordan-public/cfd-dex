@@ -12,8 +12,11 @@ contract CFDOrderBook is ICFDOrderBook {
     address public owner;
     IERC20 public settlementCurrency;
     AggregatorV3Interface public priceFeed;
-    uint256 settlementCurrencyDecimalsFactor;
-    uint256 priceDecimalsFactor;
+    uint256 public settlementCurrencyDenominator;
+    uint256 public priceDenominator;
+    uint256 entryMargin;
+    uint256 maintenanceMargin;
+    uint256 liquidationPentalty;
         
     uint256 public feesToCollect; // = 0;
     uint16 public constant FEE_DENOM = 10000;
@@ -22,15 +25,56 @@ contract CFDOrderBook is ICFDOrderBook {
 
     struct OrderType {
         address owner;
-        uint256 amount;
-        uint256 price;
-        bool isBuy;
+        int256 amount;
+        uint256 limitPrice;
     }
 
     OrderType[] public orders;
     mapping(address => uint256[]) public ordersOwned;
-    mapping(uint256 => uint256) public orderIndexes; // Index of the order in the array ordersOwned[owner]
+    mapping(uint256 => uint256) public orderIds; // Index of the order in the array ordersOwned[owner]
+
+    struct PositionType {
+        address owner;
+        int256 holding;
+        uint256 holdingAveragePrice;
+        uint256 collateral;
+    }
     
+    PositionType[] public positions;
+    mapping(address => uint256) public positionIds;
+
+    function numPositions() external view returns (uint256) {
+        return positions.length;
+    }
+
+    function getPositionByAddress() external view returns (int256 holding, uint256 holdingAveragePrice, uint256 collateral, uint256 requiredCollateral) {
+        uint256 positionId = positionIds[msg.sender];
+        address o;
+        (o, holding, holdingAveragePrice, collateral, requiredCollateral) = getPosition(positionId);
+    }
+ 
+    function getPosition(uint256 positionId) public view returns(address positionOwner, int256 holding, uint256 holdingAveragePrice, uint256 collateral, uint256 requiredCollateral) {
+        require(positionId < positions.length, "Non existent position");
+        positionOwner  = positions[positionId].owner;
+        holding = positions[positionId].holding;
+        holdingAveragePrice = positions[positionId].holdingAveragePrice;
+        collateral = positions[positionId].collateral;
+        int256 price = int256(getPrice());
+        int256 profit = (holding * (price - int(holdingAveragePrice))) / int256(priceDenominator);
+        int256 r = abs((((price * holding) / int256(priceDenominator)) * int256(maintenanceMargin)) / int256(1 ether)) - profit;
+        requiredCollateral = uint256(r<0 ? int256(0) : r);
+    }
+
+    function abs(int256 x) pure internal returns (int256) {
+        return x>0 ? x : -x;
+    }
+
+    function getPrice() public view returns (uint256 price) {
+        (, int256 feedPrice, , , ) = priceFeed.latestRoundData();
+        require(feedPrice > 0, "Invalid price");
+        price = uint256(feedPrice);
+    }
+
     function numOrdersOwned() external view returns (uint256) {
         return ordersOwned[msg.sender].length;
     }
@@ -49,25 +93,22 @@ contract CFDOrderBook is ICFDOrderBook {
         _;
     }
 
-    modifier onlyEOA() {
-        // This may cause a problem with Account Abstraction (see: https://eips.ethereum.org/EIPS/eip-4337)
-        // but apparently this will be an optional feature.
-        require(
-            msg.sender == tx.origin,
-            "OrderPool: Cannot call from contract"
-        );
-        _;
-    }
-
     constructor(
         address priceFeedAddress,
-        address settlementCurrencyAddress
+        address settlementCurrencyAddress,
+        uint256 _entryMargin,
+        uint256 _maintenanceMargin,
+        uint256 _liquidationPentalty
     ) {
         owner = msg.sender;
         priceFeed = AggregatorV3Interface(priceFeedAddress);
         settlementCurrency = IERC20(settlementCurrencyAddress);
-        settlementCurrencyDecimalsFactor = 10**ERC20(settlementCurrencyAddress).decimals();
-        priceDecimalsFactor = 10**priceFeed.decimals();
+        settlementCurrencyDenominator = 10**ERC20(settlementCurrencyAddress).decimals();
+        priceDenominator = 10**priceFeed.decimals();
+        entryMargin = _entryMargin;
+        maintenanceMargin = _maintenanceMargin;
+        liquidationPentalty = _liquidationPentalty;
+        positions.push(PositionType(address(0), 0, 0, 0)); // Empty position
     }
 
     // To cover "transfer" calls which return bool and/or revert
@@ -117,15 +158,8 @@ contract CFDOrderBook is ICFDOrderBook {
 
     function buy(
         uint256 amount,
-        uint256 price
+        uint256 limitPrice
     ) external returns (uint256 orderId, uint256 filled) {
-//!!!Unimplemented
-    }
-
-    function sell(
-        uint256 amount,
-        uint256 price
-    ) external returns (uint256 orderId, uint256 filled){
 //!!!Unimplemented
     }
 
@@ -133,15 +167,22 @@ contract CFDOrderBook is ICFDOrderBook {
         external
         view
         returns (
-            uint256 amount,
-            uint256 price,
-            bool isBuy
+            int256 amount,
+            uint256 limitPrice
         ) {
-//!!!Unimplemented
-        }
+        require(orderId < orders.length, "Non existent order");
+        amount = orders[orderId].amount;
+        limitPrice = orders[orderId].limitPrice;
+    }
 
-    function cancel(uint256 orderId) external{
-//!!!Unimplemented
+    function cancelOrder(uint256 orderId) internal {
+        orders[orderId].amount = 0;
+    }
+
+    function cancel(uint256 orderId) external {
+        require(orderId < orders.length, "Non exsitent order");
+        require(msg.sender == orders[orderId].owner);
+        cancelOrder(orderId);
     }
 
         function withdrawFees(address payTo)

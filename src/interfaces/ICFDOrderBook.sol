@@ -8,7 +8,15 @@ interface ICFDOrderBook {
 
     function settlementCurrency() external view returns (IERC20);
 
+    function settlementCurrencyDenominator() external view returns (uint256);
+
+    function priceDenominator() external view returns (uint256);
+
+    function getPrice() external view returns (uint256);
+
     function numOrdersOwned() external view returns (uint256);
+
+    function numPositions() external view returns (uint256);
 
     function getOrderId(uint256 index) external view returns(uint256);
 
@@ -17,19 +25,17 @@ interface ICFDOrderBook {
         uint256 price
     ) external returns (uint256 orderId, uint256 filled);
 
-    function sell(
-        uint256 amount,
-        uint256 price
-    ) external returns (uint256 orderId, uint256 filled);
-
     function orderStatus(uint256 orderId)
         external
         view
         returns (
-            uint256 amount,
-            uint256 price,
-            bool isBuy
+            int256 amount,
+            uint256 limitPrice
         );
+
+    function getPositionByAddress() external view returns (int256 holding, uint256 holdingAveragePrice, uint256 collateral, uint256 requiredCollateral);
+
+    function getPosition(uint256 positionId) external view returns(address owner, int256 holding, uint256 holdingAveragePrice, uint256 collateral, uint256 requiredCollateral);
 
     function cancel(uint256 orderId) external;
 

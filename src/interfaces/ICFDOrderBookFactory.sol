@@ -8,7 +8,10 @@ interface ICFDOrderBookFactory {
 
     function createOrderBook(
         address priceFeedAddress,
-        address settlementCurrencyAddress
+        address settlementCurrencyAddress,
+        uint256 entryMargin,
+        uint256 maintenanceMargin,
+        uint256 liquidationPentalty
     ) external;
 
     function getNumOBs() external view returns (uint256);
