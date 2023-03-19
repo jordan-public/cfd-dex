@@ -2,8 +2,9 @@
 pragma solidity ^0.8.13;
 
 import "forge-std/console.sol";
-import "openzeppelin-contracts/token/ERC20/IERC20.sol";
-import "openzeppelin-contracts/token/ERC20/ERC20.sol";
+// import "openzeppelin-contracts/token/ERC20/IERC20.sol";
+// import "openzeppelin-contracts/token/ERC20/ERC20.sol";
+import "forge-std/interfaces/IERC20.sol";
 import "chainlink/interfaces/AggregatorV3Interface.sol";
 import "./interfaces/IFlashCollateralBeneficiary.sol";
 import "./interfaces/ICFDOrderBook.sol";
@@ -255,7 +256,7 @@ contract CFDOrderBook is ICFDOrderBook {
         priceFeed = AggregatorV3Interface(priceFeedAddress);
         settlementCurrency = IERC20(settlementCurrencyAddress);
         settlementCurrencyDenominator =
-            10**ERC20(settlementCurrencyAddress).decimals();
+            10**IERC20(settlementCurrencyAddress).decimals();
         priceDenominator = 10**priceFeed.decimals();
         entryMargin = _entryMargin;
         maintenanceMargin = _maintenanceMargin;
