@@ -5,6 +5,7 @@ import "forge-std/console.sol";
 import "openzeppelin-contracts/token/ERC20/IERC20.sol";
 import "openzeppelin-contracts/token/ERC20/ERC20.sol";
 import "chainlink/interfaces/AggregatorV3Interface.sol";
+import "./interfaces/IFlashCollateralBeneficiary.sol";
 import "./interfaces/ICFDOrderBook.sol";
 import "./interfaces/ICFDOrderBookFactory.sol";
 
@@ -17,7 +18,8 @@ contract CFDOrderBook is ICFDOrderBook {
     uint256 entryMargin;
     uint256 maintenanceMargin;
     uint256 liquidationPentalty;
-        
+    uint256 dust;
+
     uint256 public feesToCollect; // = 0;
     uint16 public constant FEE_DENOM = 10000;
     uint16 public constant FEE_TAKER_TO_MAKER = 25; // 0.25%
@@ -31,7 +33,7 @@ contract CFDOrderBook is ICFDOrderBook {
 
     OrderType[] public orders;
     mapping(address => uint256[]) public ordersOwned;
-    mapping(uint256 => uint256) public orderIds; // Index of the order in the array ordersOwned[owner]
+    uint256 numActiveOrders; // = 0
 
     struct PositionType {
         address owner;
@@ -39,7 +41,7 @@ contract CFDOrderBook is ICFDOrderBook {
         uint256 holdingAveragePrice;
         uint256 collateral;
     }
-    
+
     PositionType[] public positions;
     mapping(address => uint256) public positionIds;
 
@@ -47,26 +49,174 @@ contract CFDOrderBook is ICFDOrderBook {
         return positions.length;
     }
 
-    function getPositionByAddress() external view returns (int256 holding, uint256 holdingAveragePrice, uint256 collateral, uint256 requiredCollateral) {
-        uint256 positionId = positionIds[msg.sender];
-        address o;
-        (o, holding, holdingAveragePrice, collateral, requiredCollateral) = getPosition(positionId);
+    function getMyPosition()
+        external
+        view
+        returns (
+            int256 holding,
+            uint256 holdingAveragePrice,
+            uint256 collateral,
+            uint256 liquidationCollateralLevel,
+            int256 unrealizedGain
+        )
+    {
+        (
+            ,
+            holding,
+            holdingAveragePrice,
+            collateral,
+            liquidationCollateralLevel,
+            unrealizedGain
+        ) = getPosition(positionIds[msg.sender]);
     }
- 
-    function getPosition(uint256 positionId) public view returns(address positionOwner, int256 holding, uint256 holdingAveragePrice, uint256 collateral, uint256 requiredCollateral) {
+
+    function getRequiredEntryCollateral(uint256 positionId, uint256 tradePrice)
+        public
+        view
+        returns (uint256)
+    {
+        int256 positionValue = (positions[positionId].holding *
+            int256(tradePrice)) / int256(priceDenominator);
+        return
+            uint256(abs(positionValue * int256(entryMargin))) /
+            uint256(1 ether);
+    }
+
+    function getLiquidationCollateral(uint256 positionId)
+        internal
+        view
+        returns (uint256)
+    {
+        int256 positionValue = (positions[positionId].holding *
+            int256(getPrice())) / int256(priceDenominator);
+        return
+            uint256(abs(positionValue * int256(maintenanceMargin))) /
+            uint256(1 ether);
+    }
+
+    function getUnrealizedGain(uint256 positionId)
+        internal
+        view
+        returns (int256)
+    {
+        return
+            (positions[positionId].holding *
+                (int256(getPrice()) -
+                    int256(positions[positionId].holdingAveragePrice))) /
+            int256(priceDenominator);
+    }
+
+    function getPosition(uint256 positionId)
+        public
+        view
+        returns (
+            address positionOwner,
+            int256 holding,
+            uint256 holdingAveragePrice,
+            uint256 collateral,
+            uint256 liquidationCollateralLevel,
+            int256 unrealizedGain
+        )
+    {
         require(positionId < positions.length, "Non existent position");
-        positionOwner  = positions[positionId].owner;
+        positionOwner = positions[positionId].owner;
         holding = positions[positionId].holding;
         holdingAveragePrice = positions[positionId].holdingAveragePrice;
         collateral = positions[positionId].collateral;
-        int256 price = int256(getPrice());
-        int256 profit = (holding * (price - int(holdingAveragePrice))) / int256(priceDenominator);
-        int256 r = abs((((price * holding) / int256(priceDenominator)) * int256(maintenanceMargin)) / int256(1 ether)) - profit;
-        requiredCollateral = uint256(r<0 ? int256(0) : r);
+        liquidationCollateralLevel = getLiquidationCollateral(positionId);
+        unrealizedGain = getUnrealizedGain(positionId);
     }
 
-    function abs(int256 x) pure internal returns (int256) {
-        return x>0 ? x : -x;
+    function averagePrice(
+        int256 holding,
+        uint256 holdingAveragePrice,
+        int256 addHolding,
+        uint256 addHoldingAveragePrice
+    ) internal pure returns (uint256) {
+        int256 totalValueNumerator = holding *
+            int256(holdingAveragePrice) +
+            addHolding *
+            int256(addHoldingAveragePrice);
+        int256 totalHolding = holding + addHolding;
+        // Both above are signed values
+        if (totalHolding == 0) return 0; // todo: account for possibility of extremely small holding (dust)
+        return uint256(totalValueNumerator / abs(totalHolding));
+    }
+
+    /// Assumes the position of the liquidated address
+    function liquidate(uint256 positionId) public {
+        uint256 myPositionId = positionIds[msg.sender];
+        require(myPositionId != 0, "Caller has no funds");
+        require(myPositionId != positionId, "Self liquidation forbidden");
+        uint256 liquidationCollateral = getLiquidationCollateral(positionId);
+        require(
+            positions[positionId].collateral <= liquidationCollateral,
+            "Cannot liquidate"
+        );
+
+        // Liquidate optimistically
+        int256 penalty = ((int256(liquidationCollateral) -
+            int256(positions[positionId].collateral)) *
+            int256(liquidationPentalty)) / int256(1 ether); // Penalty
+
+        int256 newCollateral = int256(positions[positionId].collateral) +
+            getUnrealizedGain(positionId);
+        require(newCollateral > 0, "Position insolvent");
+        positions[positionId].collateral = uint256(newCollateral); // Realize gain as position is taken over (may be negative)
+
+        if (penalty > int256(positions[positionId].collateral))
+            penalty = int256(positions[positionId].collateral); // Take as much as possible (there may not be enough)
+        positions[positionId].collateral -= uint256(penalty);
+        positions[myPositionId].collateral += uint256(penalty);
+
+        uint256 priceAtLiquidation = getPrice();
+        positions[myPositionId].holdingAveragePrice = averagePrice(
+            positions[myPositionId].holding,
+            positions[myPositionId].holdingAveragePrice,
+            positions[positionId].holding,
+            uint256(priceAtLiquidation)
+        );
+        positions[myPositionId].holding += positions[positionId].holding; // Take over entire holding
+        positions[positionId].holding = 0;
+        positions[positionId].holdingAveragePrice = 0;
+
+        // Now enforce collateralization of takeover position
+        require(
+            positions[myPositionId].collateral >=
+                getRequiredEntryCollateral(myPositionId, priceAtLiquidation),
+            "Insufficient funds"
+        );
+    }
+
+    function deposit(uint256 amount) external {
+        safeTransfer(settlementCurrency, address(this), amount);
+        uint256 myPositionId = positionIds[msg.sender];
+        if (myPositionId == 0) { // No position
+            // Create position
+            myPositionId = positions.length;
+            positions.push();
+            positionIds[msg.sender] == myPositionId;
+        }
+        positions[myPositionId].collateral += amount;
+    }
+
+    function withdraw(uint256 amount) external {
+        uint256 myPositionId = positionIds[msg.sender];
+        require(
+            positions[myPositionId].collateral >=
+                getRequiredEntryCollateral(myPositionId, getPrice()) + amount,
+            "Insufficient collateral"
+        );
+        positions[myPositionId].collateral -= amount;
+        safeTransferFrom(settlementCurrency, address(this), msg.sender, amount);
+    }
+
+    function abs(int256 x) internal pure returns (int256) {
+        return x > 0 ? x : -x;
+    }
+
+    function sgn(int256 x) internal pure returns (int256) {
+        return x > 0 ? int256(1) : int256(-1);
     }
 
     function getPrice() public view returns (uint256 price) {
@@ -79,7 +229,7 @@ contract CFDOrderBook is ICFDOrderBook {
         return ordersOwned[msg.sender].length;
     }
 
-    function getOrderId(uint256 index) external view returns(uint256) {
+    function getOrderId(uint256 index) external view returns (uint256) {
         if (index >= ordersOwned[msg.sender].length) return 0; // Non-existent
         return ordersOwned[msg.sender][index];
     }
@@ -89,7 +239,7 @@ contract CFDOrderBook is ICFDOrderBook {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "OrderPool: Unauthorized");
+        require(msg.sender == owner, "Unauthorized");
         _;
     }
 
@@ -98,16 +248,19 @@ contract CFDOrderBook is ICFDOrderBook {
         address settlementCurrencyAddress,
         uint256 _entryMargin,
         uint256 _maintenanceMargin,
-        uint256 _liquidationPentalty
+        uint256 _liquidationPentalty,
+        uint256 _dust
     ) {
         owner = msg.sender;
         priceFeed = AggregatorV3Interface(priceFeedAddress);
         settlementCurrency = IERC20(settlementCurrencyAddress);
-        settlementCurrencyDenominator = 10**ERC20(settlementCurrencyAddress).decimals();
+        settlementCurrencyDenominator =
+            10**ERC20(settlementCurrencyAddress).decimals();
         priceDenominator = 10**priceFeed.decimals();
         entryMargin = _entryMargin;
         maintenanceMargin = _maintenanceMargin;
         liquidationPentalty = _liquidationPentalty;
+        dust = _dust;
         positions.push(PositionType(address(0), 0, 0, 0)); // Empty position
     }
 
@@ -129,7 +282,7 @@ contract CFDOrderBook is ICFDOrderBook {
         );
         require(
             success && (data.length == 0 || abi.decode(data, (bool))),
-            "OrderPool: transfer failed"
+            "Transfer failed"
         );
     }
 
@@ -152,24 +305,127 @@ contract CFDOrderBook is ICFDOrderBook {
         );
         require(
             success && (data.length == 0 || abi.decode(data, (bool))),
-            "OrderPool: transferFrom failed"
+            "TransferFrom failed"
         );
     }
 
-    function buy(
-        uint256 amount,
-        uint256 limitPrice
-    ) external returns (uint256 orderId, uint256 filled) {
-//!!!Unimplemented
+    function make(int256 amount, uint256 limitPrice)
+        external
+        returns (uint256 orderId)
+    {
+        require(abs(amount) > int256(dust), "Dust");
+        uint256 myPositionId = positionIds[msg.sender];
+        require(myPositionId != 0, "No collateral");
+        // Hypothetically execute trade
+        uint256 originalHoldingAveragePrice = positions[myPositionId]
+            .holdingAveragePrice;
+        positions[myPositionId].holdingAveragePrice = averagePrice(
+            positions[myPositionId].holding,
+            positions[myPositionId].holdingAveragePrice,
+            amount,
+            limitPrice
+        );
+        positions[myPositionId].holding += amount;
+        // Check collateralization under hypothesis
+        require(
+            positions[myPositionId].collateral >=
+                getRequiredEntryCollateral(myPositionId, limitPrice),
+            "Undercollateralized"
+        );
+        // Roll back hypothesis
+        positions[myPositionId].holding -= amount;
+        positions[myPositionId]
+            .holdingAveragePrice = originalHoldingAveragePrice;
+        // Create order book entry
+        orderId = orders.length;
+        orders.push(OrderType(msg.sender, amount, limitPrice));
+        ordersOwned[msg.sender].push(orderId);
+        numActiveOrders++;
+    }
+
+    function take(uint256 orderId, int256 amount) public {
+        require(amount > int256(dust), "Minimal trade quantity");
+        require(abs(orders[orderId].amount) > int256(dust), "Empty Maker");
+        require(
+            abs(orders[orderId].amount) >= abs(amount),
+            "Taker exceeding maker size"
+        );
+        require(
+            sgn(orders[orderId].amount) != sgn(amount),
+            "Maker and Taker on same side"
+        );
+        require(
+            abs(orders[orderId].amount + amount) > int256(dust),
+            "Dust remainder"
+        );
+        uint256 myPositionId = positionIds[msg.sender];
+        require(myPositionId != 0, "No collateral");
+
+        // Optimistically transfer P/L into collaterals based on the old position
+        int256 newCol = int256(positions[myPositionId].collateral) +
+            positions[myPositionId].holding *
+            (int256(orders[orderId].limitPrice) -
+                int256(positions[myPositionId].holdingAveragePrice));
+        require(newCol >= 0, "Insufficient taker collateral");
+        positions[myPositionId].collateral = uint256(newCol);
+
+        uint256 makerPositionId = positionIds[orders[orderId].owner];
+        int256 newMakerCol = int256(positions[makerPositionId].collateral) -
+            positions[makerPositionId].holding *
+            (int256(orders[orderId].limitPrice) -
+                int256(positions[makerPositionId].holdingAveragePrice));
+        require(newMakerCol >= 0, "Insufficient maker collateral");
+        positions[makerPositionId].collateral = uint256(newMakerCol);
+
+        // Optimistically execute order
+        orders[orderId].amount += amount;
+
+        positions[myPositionId].holdingAveragePrice = averagePrice(
+            positions[myPositionId].holding,
+            positions[myPositionId].holdingAveragePrice,
+            amount,
+            orders[orderId].limitPrice
+        );
+        positions[myPositionId].holding += amount;
+
+        positions[makerPositionId].holdingAveragePrice = averagePrice(
+            positions[makerPositionId].holding,
+            positions[makerPositionId].holdingAveragePrice,
+            -amount,
+            orders[orderId].limitPrice
+        );
+        positions[makerPositionId].holding -= amount;
+
+        // Now enforce collateralization
+        require(
+            positions[myPositionId].collateral >=
+                getRequiredEntryCollateral(
+                    myPositionId,
+                    orders[orderId].limitPrice
+                ),
+            "Undercollateralized taker"
+        );
+        require(
+            positions[makerPositionId].collateral >=
+                getRequiredEntryCollateral(
+                    makerPositionId,
+                    orders[orderId].limitPrice
+                ),
+            "Undercollateralized maker"
+        );
+
+        // Clenan-up order
+        if (abs(orders[orderId].amount) <= int256(dust)) {
+            numActiveOrders--;
+            cancelOrder(orderId);
+        }
     }
 
     function orderStatus(uint256 orderId)
         external
         view
-        returns (
-            int256 amount,
-            uint256 limitPrice
-        ) {
+        returns (int256 amount, uint256 limitPrice)
+    {
         require(orderId < orders.length, "Non existent order");
         amount = orders[orderId].amount;
         limitPrice = orders[orderId].limitPrice;
@@ -182,10 +438,11 @@ contract CFDOrderBook is ICFDOrderBook {
     function cancel(uint256 orderId) external {
         require(orderId < orders.length, "Non exsitent order");
         require(msg.sender == orders[orderId].owner);
+        if (orders[orderId].amount != 0) numActiveOrders--; // Dust orders count as not canceled
         cancelOrder(orderId);
     }
 
-        function withdrawFees(address payTo)
+    function withdrawFees(address payTo)
         external
         onlyOwner
         returns (uint256 collected)
@@ -194,5 +451,27 @@ contract CFDOrderBook is ICFDOrderBook {
         safeTransfer(settlementCurrency, payTo, feesToCollect);
         collected = feesToCollect;
         feesToCollect = 0;
+    }
+
+    function flashCollateralizeAndExecute(uint256 desiredCollateral) external {
+        // Award desired collateral
+        uint256 myPositionId = positionIds[msg.sender];
+        if (myPositionId == 0) { // No position
+            // Create position
+            myPositionId = positions.length;
+            positions.push();
+            positionIds[msg.sender] == myPositionId;
+        }
+        positions[myPositionId].collateral += desiredCollateral;
+
+        // Call back the beneficiary
+        IFlashCollateralBeneficiary(msg.sender).callBack();
+
+        // Now take the awarded collateral back
+        require(positions[myPositionId].collateral >= desiredCollateral, "Cannot repay awarded collateral");
+        positions[myPositionId].collateral -= desiredCollateral; // Repay awarded collateral
+
+        // Check collateralization
+        require(positions[myPositionId].collateral >= getRequiredEntryCollateral(myPositionId, getPrice()), "Undercollateralized");
     }
 }

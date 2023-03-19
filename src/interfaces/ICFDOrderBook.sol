@@ -18,28 +18,50 @@ interface ICFDOrderBook {
 
     function numPositions() external view returns (uint256);
 
-    function getOrderId(uint256 index) external view returns(uint256);
+    function getOrderId(uint256 index) external view returns (uint256);
 
-    function buy(
-        uint256 amount,
-        uint256 price
-    ) external returns (uint256 orderId, uint256 filled);
+    function make(int256 amount, uint256 limitPrice)
+        external
+        returns (uint256 orderId);
+
+    function take(uint256 orderId, int256 amount) external;
 
     function orderStatus(uint256 orderId)
         external
         view
+        returns (int256 amount, uint256 limitPrice);
+
+
+    function getRequiredEntryCollateral(uint256 positionId, uint256 tradePrice) external view returns (uint256);
+    
+    function getMyPosition()
+        external
+        view
         returns (
-            int256 amount,
-            uint256 limitPrice
+            int256 holding,
+            uint256 holdingAveragePrice,
+            uint256 collateral,
+            uint256 liquidationCollateralLevel,
+            int256 unrealizedGain
         );
 
-    function getPositionByAddress() external view returns (int256 holding, uint256 holdingAveragePrice, uint256 collateral, uint256 requiredCollateral);
-
-    function getPosition(uint256 positionId) external view returns(address owner, int256 holding, uint256 holdingAveragePrice, uint256 collateral, uint256 requiredCollateral);
+    function getPosition(uint256 positionId)
+        external
+        view
+        returns (
+            address owner,
+            int256 holding,
+            uint256 holdingAveragePrice,
+            uint256 collateral,
+            uint256 liquidationCollateralLevel,
+            int256 unrealizedGain
+        );
 
     function cancel(uint256 orderId) external;
 
     function feesToCollect() external view returns (uint256);
 
     function withdrawFees(address payTo) external returns (uint256);
+
+    function flashCollateralizeAndExecute(uint256 desiredCollateral) external;
 }

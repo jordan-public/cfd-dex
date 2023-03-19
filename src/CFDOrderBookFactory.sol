@@ -31,14 +31,16 @@ contract CFDOrderBookFactory is ICFDOrderBookFactory {
         address settlementCurrencyAddress,
         uint256 entryMargin,
         uint256 maintenanceMargin,
-        uint256 liquidationPentalty
+        uint256 liquidationPentalty,
+        uint256 dust
     ) external onlyOwner {
         ICFDOrderBook p = new CFDOrderBook(
             priceFeedAddress,
             settlementCurrencyAddress,
             entryMargin,
             maintenanceMargin,
-            liquidationPentalty
+            liquidationPentalty,
+            dust
         );
         obList.push(p); // Duplicates possible - no harm done
     }

@@ -11,7 +11,8 @@ interface ICFDOrderBookFactory {
         address settlementCurrencyAddress,
         uint256 entryMargin,
         uint256 maintenanceMargin,
-        uint256 liquidationPentalty
+        uint256 liquidationPentalty,
+        uint256 dust
     ) external;
 
     function getNumOBs() external view returns (uint256);
