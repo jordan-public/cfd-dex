@@ -1,6 +1,8 @@
 # Compiler files
 cache/
 out/
+tmp/
+**/.DS_Store
 
 # Ignores development broadcast logs
 !/broadcast
