@@ -31,11 +31,11 @@ function SideBar({provider, address, setPair}) {
     }, [provider, address]); // On load
 
     if (!provider) return <></>;
-    return (<>
+    return (
         <ButtonGroup gap='4' flexDirection='column' alignItems='center' margin={4}>
             {pairList.map((p) => <Button key={p.Description} colorScheme='blue' size='sm' onClick={()=>setPair(p)}>{p.Description}</Button>)}
         </ButtonGroup>
-        </>);
+    );
 }
 
 export default SideBar;
