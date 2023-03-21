@@ -8,6 +8,7 @@ import OrderBook from './OrderBook'
 function Body({provider, address, pair}) {
     if (!pair || !address) return <></>;
     return (<VStack>
+        <br/>
         <Position provider={provider} address={address} pair={pair}/>
         <OrderEntry provider={provider} address={address} pair={pair}/>
         <OrderBook provider={provider} address={address} pair={pair}/>

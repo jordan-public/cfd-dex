@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 import BigNumber from 'bignumber.js';
 
-export default function uint256ToDecimal(u, decimals) {
-    if (decimals === null) return "";
+// denom : ethers.BigNumber
+export default function uint256ToDecimal(u, denom) {
+    if (denom.isZero()) return "";
     let bd = new BigNumber(u.toString());
-    bd = bd.dividedBy(new BigNumber(10).exponentiatedBy(new BigNumber(decimals)));
+    bd = bd.dividedBy(new BigNumber(denom.toString()));
     BigNumber.config({ EXPONENTIAL_AT: 256 })
-//console.log("uint256ToDecimal", u, bd.toString());
     return bd.toString();
 }
