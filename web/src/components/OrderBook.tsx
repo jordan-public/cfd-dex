@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button, ButtonGroup } from '@chakra-ui/react'
 
-function OrderBook({provider, address, pair}) {
+function OrderBook({provider, address, pair, myPos, denom, oraclePrice}) {
     return (<>
         Order Book here
     </>);
