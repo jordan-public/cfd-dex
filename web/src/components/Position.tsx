@@ -7,6 +7,7 @@ import uint256ToDecimal from '../utils/uint256ToDecimal';
 function Position({provider, address, pair}) {
     const [myPos, setMyPos] = React.useState(null);
     const [denom, setDenom] = React.useState(BigNumber.from(0));
+    const [oraclePrice, setOraclePrice] = React.useState(BigNumber.from(0));
 
 
     React.useEffect(() => {
@@ -14,11 +15,17 @@ function Position({provider, address, pair}) {
             if (!pair) return;
             setMyPos(await pair.contract.getMyPosition());
             setDenom(await pair.contract.settlementCurrencyDenominator());
+            setOraclePrice(await pair.contract.getPrice());
         }) ();
     }, [provider, address, pair]); // On load
 
-    if (!pair || !myPos || denom.isZero()) return(<></>);
-    return (<Box bg='gray.50' borderRadius='md' shadow='lg' align='center' p={6}><StatGroup gap={20}>
+    if (!pair || !myPos || denom.isZero() || oraclePrice.isZero()) return(<></>);
+    return (<Box bg={myPos.collateral.lt(myPos.liquidationCollateralLevel) ? 'red.100' : 'green.100'} borderRadius='md' shadow='lg' align='center' p={6}><StatGroup gap={20}>
+        <Stat>
+          <StatNumber>{uint256ToDecimal(oraclePrice, denom)}</StatNumber>
+          <StatLabel>Oracle Price</StatLabel>
+        </Stat>
+      
         <Stat>
           <StatNumber>{uint256ToDecimal(myPos.holding, denom)}</StatNumber>
           <StatLabel>{pair.Description} Holding</StatLabel>
@@ -43,7 +50,7 @@ function Position({provider, address, pair}) {
           <StatNumber>{uint256ToDecimal(myPos.unrealizedGain, denom)}</StatNumber>
           { !myPos.holding.isZero() && <StatHelpText>
             <StatArrow type={myPos.unrealizedGain.gte(BigNumber.from(0)) ? 'increase' : 'decrease'} />
-            {uint256ToDecimal(myPos.unrealizedGain.mul(BigNumber.from(10000)).div(myPos.holding), BigNumber.from(100))} %
+            {uint256ToDecimal(myPos.unrealizedGain.mul(BigNumber.from(10000)).div(myPos.holding.abs()), BigNumber.from(100))} %
           </StatHelpText>}
           <StatLabel>Unrealized Gain</StatLabel>
         </Stat>

@@ -90,7 +90,6 @@ function Account({provider, setProvider, address, setAddress}) {
         setProvider(null);
    }
 
-console.log("address: ", address);
     if (address) return (<HStack>
             <Text>Account: {address}</Text>
             <Text>Network: {network && network.name} ({network && network.chainId})</Text>
