@@ -5,6 +5,8 @@ import styles from '@/styles/Home.module.css'
 import React from 'react'
 import { Flex, Box, Grid, GridItem } from '@chakra-ui/react'
 import NavigationBar from '@/components/NavigationBar'
+import SideBar from '@/components/SideBar'
+import Body from '@/components/Body'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,16 +24,15 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <Grid width='100%' 
-        >
-          <GridItem rowStart={1} colStart={1} colSpan={10}>
+        <Grid width='100%'>
+          <GridItem rowStart={1} colStart={1} colSpan={20}>
             <NavigationBar provider={provider} setProvider={setProvider} address={address} setAddress={setAddress} />
           </GridItem>
           <GridItem rowStart={2} colSpan={1} bg='gray.50'>
-            Sidebar
+            <SideBar provider={provider} address={address} setPair={setPair}/>
           </GridItem>
-          <GridItem rowStart={2} colSpan={9} bg='green.50'>
-            Body
+          <GridItem rowStart={2} colSpan={19} bg='green.50'>
+            <Body provider={provider} address={address} pair={pair}/>
           </GridItem>
         </Grid>    
       </main>
