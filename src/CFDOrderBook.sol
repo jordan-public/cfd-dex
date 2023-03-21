@@ -226,6 +226,10 @@ contract CFDOrderBook is ICFDOrderBook {
         price = uint256(feedPrice);
     }
 
+    function numOrders() external view returns (uint256) {
+        return orders.length;
+    }
+
     function numOrdersOwned() external view returns (uint256) {
         return ordersOwned[msg.sender].length;
     }
@@ -425,9 +429,10 @@ contract CFDOrderBook is ICFDOrderBook {
     function orderStatus(uint256 orderId)
         external
         view
-        returns (int256 amount, uint256 limitPrice)
+        returns (address _owner, int256 amount, uint256 limitPrice)
     {
         require(orderId < orders.length, "Non existent order");
+        _owner = orders[orderId].owner;
         amount = orders[orderId].amount;
         limitPrice = orders[orderId].limitPrice;
     }

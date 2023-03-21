@@ -15,6 +15,8 @@ interface ICFDOrderBook {
 
     function getPrice() external view returns (uint256);
 
+    function numOrders() external view returns (uint256);
+
     function numOrdersOwned() external view returns (uint256);
 
     function numPositions() external view returns (uint256);
@@ -30,8 +32,7 @@ interface ICFDOrderBook {
     function orderStatus(uint256 orderId)
         external
         view
-        returns (int256 amount, uint256 limitPrice);
-
+        returns (address owner, int256 amount, uint256 limitPrice);
 
     function getRequiredEntryCollateral(uint256 positionId, uint256 tradePrice) external view returns (uint256);
     
