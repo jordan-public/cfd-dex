@@ -9,7 +9,7 @@ tmp/
 web/src/artifacts/
 
 broadcast/DeployAnvil.s.sol/*/*
-!broadcast/DeployAnvil.s.sol/*/run-latest.json
+#!broadcast/DeployAnvil.s.sol/*/run-latest.json
 broadcast/DeployPolygon.s.sol/*/*
 !broadcast/DeployPolygon.s.sol/*/run-latest.json
 # Ignores development broadcast logs
