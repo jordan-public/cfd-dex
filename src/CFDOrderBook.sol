@@ -212,6 +212,14 @@ contract CFDOrderBook is ICFDOrderBook {
         safeTransferFrom(settlementCurrency, address(this), msg.sender, amount);
     }
 
+    function withdrawMax() external {
+        uint256 myPositionId = positionIds[msg.sender];
+        int256 amountWithdrawable = positions[myPositionId].collateral - getRequiredEntryCollateral(myPositionId, getPrice());
+        if (amountWithdrawable <= 0) return;
+        positions[myPositionId].collateral -= amountWithdrawable;
+        safeTransferFrom(settlementCurrency, address(this), msg.sender, uint256(amountWithdrawable));
+     }
+
     function abs(int256 x) internal pure returns (int256) {
         return x > 0 ? x : -x;
     }

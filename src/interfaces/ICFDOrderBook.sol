@@ -22,6 +22,12 @@ interface ICFDOrderBook {
 
     function getOrderId(uint256 index) external view returns (uint256);
 
+    function deposit(uint256 amount) external;
+
+    function withdraw(uint256 amount) external;
+
+    function withdrawMax() external;
+
     function make(int256 amount, uint256 limitPrice)
         external
         returns (uint256 orderId);
