@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
-// import "openzeppelin-contracts/token/ERC20/IERC20.sol";
 import "forge-std/interfaces/IERC20.sol";
    
 interface ICFDOrderBook {
@@ -34,16 +33,16 @@ interface ICFDOrderBook {
         view
         returns (address owner, int256 amount, uint256 limitPrice);
 
-    function getRequiredEntryCollateral(uint256 positionId, uint256 tradePrice) external view returns (uint256);
+    function getRequiredEntryCollateral(uint256 positionId, uint256 tradePrice) external view returns (int256);
     
     function getMyPosition()
         external
         view
         returns (
             int256 holding,
-            uint256 holdingAveragePrice,
-            uint256 collateral,
-            uint256 liquidationCollateralLevel,
+            int256 holdingAveragePrice,
+            int256 collateral,
+            int256 liquidationCollateralLevel,
             int256 unrealizedGain
         );
 
@@ -53,9 +52,9 @@ interface ICFDOrderBook {
         returns (
             address owner,
             int256 holding,
-            uint256 holdingAveragePrice,
-            uint256 collateral,
-            uint256 liquidationCollateralLevel,
+            int256 holdingAveragePrice,
+            int256 collateral,
+            int256 liquidationCollateralLevel,
             int256 unrealizedGain
         );
 
