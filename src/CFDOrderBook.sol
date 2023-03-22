@@ -53,6 +53,7 @@ contract CFDOrderBook is ICFDOrderBook {
         external
         view
         returns (
+            uint256 id,
             int256 holding,
             int256 holdingAveragePrice,
             int256 collateral,
@@ -60,6 +61,7 @@ contract CFDOrderBook is ICFDOrderBook {
             int256 unrealizedGain
         )
     {
+        id = positionIds[msg.sender];
         (
             ,
             holding,
@@ -67,7 +69,7 @@ contract CFDOrderBook is ICFDOrderBook {
             collateral,
             liquidationCollateralLevel,
             unrealizedGain
-        ) = getPosition(positionIds[msg.sender]);
+        ) = getPosition(id);
     }
 
     // Assumes transaction executed optimistically at tradePrice
@@ -190,14 +192,13 @@ contract CFDOrderBook is ICFDOrderBook {
     }
 
     function deposit(uint256 amount) external {
-        safeTransfer(settlementCurrency, address(this), amount);
-console.log("point1");
+        safeTransferFrom(settlementCurrency, msg.sender, address(this), amount);
         uint256 myPositionId = positionIds[msg.sender];
         if (myPositionId == 0) { // No position
             // Create position
             myPositionId = positions.length;
             positions.push();
-            positionIds[msg.sender] == myPositionId;
+            positionIds[msg.sender] = myPositionId;
         }
         positions[myPositionId].collateral += int256(amount);
     }
@@ -210,15 +211,16 @@ console.log("point1");
             "Insufficient collateral"
         );
         positions[myPositionId].collateral -= int256(amount);
-        safeTransferFrom(settlementCurrency, address(this), msg.sender, amount);
+        safeTransfer(settlementCurrency, msg.sender, amount);
     }
 
-    function withdrawMax() external {
+    function withdrawMax() external returns (uint256 amount) {
         uint256 myPositionId = positionIds[msg.sender];
         int256 amountWithdrawable = positions[myPositionId].collateral - getRequiredEntryCollateral(myPositionId, getPrice());
-        if (amountWithdrawable <= 0) return;
+        if (amountWithdrawable <= 0) return 0;
         positions[myPositionId].collateral -= amountWithdrawable;
-        safeTransferFrom(settlementCurrency, address(this), msg.sender, uint256(amountWithdrawable));
+        amount = uint256(amountWithdrawable);
+        safeTransfer(settlementCurrency, msg.sender, amount);
      }
 
     function abs(int256 x) internal pure returns (int256) {
@@ -275,7 +277,7 @@ console.log("point1");
         maintenanceMargin = _maintenanceMargin;
         liquidationPentalty = _liquidationPentalty;
         dust = _dust;
-        positions.push(PositionType(address(0), 0, 0, 0)); // Empty position
+        positions.push(PositionType(address(0), 0, 0, 0)); // Empty position (sentinel)
     }
 
     // To cover "transfer" calls which return bool and/or revert
@@ -462,7 +464,7 @@ console.log("point1");
             // Create position
             myPositionId = positions.length;
             positions.push();
-            positionIds[msg.sender] == myPositionId;
+            positionIds[msg.sender] = myPositionId;
         }
         positions[myPositionId].collateral += int256(desiredCollateral);
 

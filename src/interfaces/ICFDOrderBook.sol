@@ -26,7 +26,7 @@ interface ICFDOrderBook {
 
     function withdraw(uint256 amount) external;
 
-    function withdrawMax() external;
+    function withdrawMax() external returns (uint256 amount);
 
     function make(int256 amount, uint256 limitPrice)
         external
@@ -45,6 +45,7 @@ interface ICFDOrderBook {
         external
         view
         returns (
+            uint256 id,
             int256 holding,
             int256 holdingAveragePrice,
             int256 collateral,
