@@ -41,8 +41,8 @@ function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice
 
     const onDeposit = async () => {
         if (await authorizeIfNeeded() === 0) return;
-return;
         try{
+console.log("amt", BigNumber.from(decimalToUint256(value, sdenom)), BigNumber.from(decimalToUint256(value, sdenom)).toString())
             const tx = await pair.contract.deposit(BigNumber.from(decimalToUint256(value, sdenom)))
             const r = await tx.wait()
             window.alert('Completed. Block hash: ' + r.blockHash)

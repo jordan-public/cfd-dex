@@ -5,18 +5,8 @@ import "forge-std/Script.sol";
 import "forge-std/console.sol";
 import "../src/CFDOrderBook.sol";
 import "../src/CFDOrderBookFactory.sol";
-import "forge-std/interfaces/IERC20.sol";
-import "openzeppelin-contracts/token/ERC20/ERC20.sol";
-
-contract USDC is ERC20 {
-    constructor() ERC20("Fake USDC for testing", "USDC") {
-        _mint(msg.sender, 10**6 * 10**6);
-    }
-
-    function decimals() public pure returns(uint8) {
-        return 6;
-    }
-}
+//import "forge-std/interfaces/IERC20.sol";
+import "../src/ERC20.sol";
 
 contract Deploy is Script {
     // Gnosis Mainnet
@@ -36,14 +26,24 @@ contract Deploy is Script {
     uint256 LIQUIDATION_PENALTY =    20000000000000000; // 0.02 = 2%
     uint256 DUST =                   10000000000000000; // 0.01
     
+    // Test accounts from passphrase in env (not in repo)
+    address constant account0 = 0x17eE56D300E3A0a6d5Fd9D56197bFfE968096EdB;
+    address constant account1 = 0xFE6A93054b240b2979F57e49118A514F75f66D4e;
+    address constant account2 = 0xcEeEa627dDe5EF73Fe8625e146EeBba0fdEB00bd;
+    address constant account3 = 0xEf5b07C0cb002853AdaD2B2E817e5C66b62d34E6;
+
     function run() external {
         // uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(); /*deployerPrivateKey*/
 
         console.log("Creator (owner): ", msg.sender);
 
-        USDC = address(new TestUSDC());
-        console.log("Test USDC address: ", USDC);
+        // Test USDC token
+        IERC20 USDC = new ERC20("Test USDC", "USDC", 6, 10**6 * 10**6); // 1M total supply
+        console.log("Test USDC address: ", address(USDC));
+        USDC.transfer(account1, 100000 * 10**USDC.decimals());
+        USDC.transfer(account2, 100000 * 10**USDC.decimals());
+        USDC.transfer(account3, 100000 * 10**USDC.decimals());
 
         CFDOrderBookFactory factory = new CFDOrderBookFactory();
         console.log(
