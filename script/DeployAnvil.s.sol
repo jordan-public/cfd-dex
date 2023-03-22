@@ -5,10 +5,22 @@ import "forge-std/Script.sol";
 import "forge-std/console.sol";
 import "../src/CFDOrderBook.sol";
 import "../src/CFDOrderBookFactory.sol";
+import "forge-std/interfaces/IERC20.sol";
+import "openzeppelin-contracts/token/ERC20/ERC20.sol";
+
+contract USDC is ERC20 {
+    constructor() ERC20("Fake USDC for testing", "USDC") {
+        _mint(msg.sender, 10**6 * 10**6);
+    }
+
+    function decimals() public pure returns(uint8) {
+        return 6;
+    }
+}
 
 contract Deploy is Script {
     // Gnosis Mainnet
-    address constant USDC = 0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83;
+    // address constant USDC = 0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83;
     
     address constant ORACLE_EUR_USD =
         0xab70BCB260073d036d1660201e9d5405F5829b7a;
@@ -29,7 +41,10 @@ contract Deploy is Script {
         vm.startBroadcast(); /*deployerPrivateKey*/
 
         console.log("Creator (owner): ", msg.sender);
-  
+
+        USDC = address(new TestUSDC());
+        console.log("Test USDC address: ", USDC);
+
         CFDOrderBookFactory factory = new CFDOrderBookFactory();
         console.log(
             "CFD Order Book Factory deployed: ",
