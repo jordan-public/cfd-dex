@@ -51,7 +51,6 @@ function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice
             <Button onClick={onBid}>Bid</Button>
             <Button onClick={onOffer}>Offer</Button>
         </HStack>
-        {limitPrice}
     </Box>);
 }
 
