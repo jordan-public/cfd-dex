@@ -191,6 +191,7 @@ contract CFDOrderBook is ICFDOrderBook {
 
     function deposit(uint256 amount) external {
         safeTransfer(settlementCurrency, address(this), amount);
+console.log("point1");
         uint256 myPositionId = positionIds[msg.sender];
         if (myPositionId == 0) { // No position
             // Create position
