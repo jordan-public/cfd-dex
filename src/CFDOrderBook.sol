@@ -12,10 +12,10 @@ import "./interfaces/ICFDOrderBookFactory.sol";
 // - The collateral is priced in the amount of decimal places of the collateral token.
 //   For example, USDC has 6 decimals
 // - The CFD underlying asset is priced in the amount of decimals that the oracle provides.
-//   For example "EUR/USD" pricing provided by ChainLink has 6 decimals.
+//   For example "EUR/USD" pricing provided by ChainLink has 8 decimals.
 // - The amounts of the underlying asset is always priced in 18 decimals (1 ether / 1 wei).
 //   For example, 1M EUR/USD would be represented ad 10**6 * 10**18
-// - The value of the CFD and the P/L is priced in the same amount of decimals ad the
+// - The value of the CFD and the P/L is priced in the same amount of decimals as the
 //   collateral. This is because this value has to be directly comparable to the collateral.
 //   For example, 1M worth of EUR/USD at price 1.1 when USDC is used as collateral
 //   would be represented as 1.1 * 10**6 * 10**6, which is 1.1M with 6 decimals.
@@ -31,6 +31,8 @@ contract CFDOrderBook is ICFDOrderBook {
     uint256 maintenanceMargin;
     uint256 liquidationPentalty;
     uint256 dust;
+
+    uint256 mockPrice; // = 0; for testing
 
     uint256 public feesToCollect; // = 0;
     uint16 public constant FEE_DENOM = 10000;
@@ -251,9 +253,15 @@ contract CFDOrderBook is ICFDOrderBook {
     }
 
     function getPrice() public view returns (uint256 price) {
+        if (mockPrice != 0) return mockPrice;
         (, int256 feedPrice, , , ) = priceFeed.latestRoundData();
         require(feedPrice > 0, "Invalid price");
         price = uint256(feedPrice);
+    }
+
+    function setMockPrice(uint256 price) external {
+        require(msg.sender == ICFDOrderBookFactory(owner).owner(), "Unauthorized");
+        mockPrice = price;
     }
 
     function numOrders() external view returns (uint256) {

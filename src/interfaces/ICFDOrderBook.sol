@@ -14,6 +14,8 @@ interface ICFDOrderBook {
 
     function getPrice() external view returns (uint256);
 
+    function setMockPrice(uint256 price) external;
+    
     function numOrders() external view returns (uint256);
 
     function numOrdersOwned() external view returns (uint256);
