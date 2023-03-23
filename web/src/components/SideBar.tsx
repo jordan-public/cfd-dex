@@ -32,8 +32,9 @@ function SideBar({provider, address, setPair}) {
 
     if (!provider) return <></>;
     return (
-        <ButtonGroup gap='4' flexDirection='column' alignItems='center' margin={4}>
-            {pairList.map((p) => <Button key={p.Description} colorScheme='blue' size='sm' onClick={()=>setPair(p)}>{p.Description}</Button>)}
+        <ButtonGroup gap='4' flexDirection='column' alignItems='center' margin={1}>
+            <br/>
+            {pairList.map((p) => <Button key={p.Description} colorScheme='blue' size='sm' width='80%' align='center' onClick={()=>setPair(p)}>{p.Description}</Button>)}
         </ButtonGroup>
     );
 }

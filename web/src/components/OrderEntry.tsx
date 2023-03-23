@@ -94,9 +94,9 @@ function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice
             <NumberInput  value={value} onChange={v => setValue(parseFloat(v))} precision={2}>
                 <NumberInputField/>
             </NumberInput>
-            <Button onClick={onDeposit}>Deposit</Button>
-            <Button onClick={onWithdraw}>Withdraw</Button>
-            <Button onClick={onWitdrawMax}>Withdraw Max.</Button>
+            <Button onClick={onDeposit} colorScheme='green'>Deposit</Button>
+            <Button onClick={onWithdraw} colorScheme='red'>Withdraw</Button>
+            <Button onClick={onWitdrawMax} colorScheme='red'>Withdraw Max.</Button>
         </HStack>
         <HStack p={4}>
             <NumberInput  value={amount} onChange={v => setAmount(parseFloat(v))} precision={2}>
@@ -105,8 +105,8 @@ function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice
             <NumberInput value={limitPrice} onChange={v => setLimitPrice(parseFloat(v))} precision={6}>
                 <NumberInputField />
             </NumberInput>
-            <Button onClick={onBid}>Bid</Button>
-            <Button onClick={onOffer}>Offer</Button>
+            <Button onClick={onBid} colorScheme='green'>Bid</Button>
+            <Button onClick={onOffer} colorScheme='red'>Offer</Button>
         </HStack>
     </Box>);
 }
