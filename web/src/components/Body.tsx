@@ -32,7 +32,7 @@ function Body({provider, address, pair}) {
     }, [provider, address, pair, blockNumber]); // On load
 
     const onUpdate = async (blockNumber) => {
-console.log("Block ", blockNumber);
+// console.log("Block ", blockNumber);
         setBlockNumber(blockNumber)
     }
 
