@@ -11,7 +11,7 @@ function Body({provider, address, pair}) {
     const [sdenom, setSDenom] = React.useState(BigNumber.from(0));
     const [pdenom, setPDenom] = React.useState(BigNumber.from(0));
     const [oraclePrice, setOraclePrice] = React.useState(BigNumber.from(0));
-
+    const [blockNumber, setBlockNumber] = React.useState(null);
 
     React.useEffect(() => {
         (async () => {
@@ -22,6 +22,26 @@ function Body({provider, address, pair}) {
             setOraclePrice(await pair.contract.getPrice());
         }) ();
     }, [provider, address, pair]); // On load
+
+    React.useEffect(() => {
+        (async () => {
+            if (!pair) return;
+            setMyPos(await pair.contract.getMyPosition());
+            setOraclePrice(await pair.contract.getPrice());
+        }) ();
+    }, [provider, address, pair, blockNumber]); // On load
+
+    const onUpdate = async (blockNumber) => {
+console.log("Block ", blockNumber);
+        setBlockNumber(blockNumber)
+    }
+
+    React.useEffect(() => {
+        if (provider) {
+            provider.on("block", onUpdate);
+            return () => provider.off("block", onUpdate);
+        }
+    }, []); // Run on each render because onUpdate is a closure
 
     if (!address || !pair || !myPos || sdenom.isZero() || pdenom.isZero() || oraclePrice.isZero()) return(<></>);
     return (<VStack>
