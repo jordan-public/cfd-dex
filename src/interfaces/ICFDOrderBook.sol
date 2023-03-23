@@ -36,6 +36,8 @@ interface ICFDOrderBook {
 
     function take(uint256 orderId, int256 amount) external;
 
+    function liquidate(uint256 positionId) external;
+    
     function orderStatus(uint256 orderId)
         external
         view

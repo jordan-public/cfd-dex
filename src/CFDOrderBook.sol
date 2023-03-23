@@ -163,8 +163,8 @@ contract CFDOrderBook is ICFDOrderBook {
         return totalValueNumerator / totalHolding;
     }
 
-    /// Assumes the position of the liquidated address
-    function liquidate(uint256 positionId) public {
+    // Takes over the liquidated position
+    function liquidate(uint256 positionId) external {
         uint256 myPositionId = positionIds[msg.sender];
         require(myPositionId != 0, "Caller has no funds");
         require(myPositionId != positionId, "Self liquidation forbidden");
