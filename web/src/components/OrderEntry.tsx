@@ -6,7 +6,7 @@ import decimalToUint256 from '../utils/decimalToUint256'
 import aIERC20 from '../artifacts/IERC20.json'
 import { ethers, BigNumber } from 'ethers'
 
-function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice}) {
+function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, blockNumber}) {
     const vdenom = BigNumber.from(10).pow(BigNumber.from(18))
     const [value, setValue] = React.useState(0)
     const [amount, setAmount] = React.useState(0)

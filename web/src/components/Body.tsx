@@ -4,6 +4,7 @@ import { VStack } from '@chakra-ui/react'
 import Position from './Position'
 import OrderEntry from './OrderEntry'
 import OrderBook from './OrderBook'
+import Liquidations from './Liquidations'
 import { BigNumber } from 'ethers'
 
 function Body({provider, address, pair}) {
@@ -46,9 +47,10 @@ console.log("Block ", blockNumber);
     if (!address || !pair || !myPos || sdenom.isZero() || pdenom.isZero() || oraclePrice.isZero()) return(<></>);
     return (<VStack>
         <br/>
-        <Position provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice}/>
-        <OrderEntry provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice}/>
-        <OrderBook provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice}/>
+        <Position provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} blockNumber={blockNumber}/>
+        <OrderEntry provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} blockNumber={blockNumber}/>
+        <OrderBook provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} blockNumber={blockNumber}/>
+        <Liquidations provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} blockNumber={blockNumber}/>
     </VStack>);
 }
 

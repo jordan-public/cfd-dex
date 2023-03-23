@@ -4,10 +4,9 @@ import { HStack, VStack, Box } from '@chakra-ui/react'
 import { BigNumber } from 'ethers';
 import Order from './Order'
 
-function OrderBook({provider, address, pair, myPos, sdenom, pdenom, oraclePrice}) {
+function OrderBook({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, blockNumber}) {
     const [bids, setBids] = React.useState([])
     const [offers, setOffers] = React.useState([])
-    const [blockNumber, setBlockNumber] = React.useState(null);
 
     React.useEffect(() => {
         (async () => {
@@ -15,10 +14,6 @@ function OrderBook({provider, address, pair, myPos, sdenom, pdenom, oraclePrice}
             await buildOrderBook();
         }) ();
     }, [provider, address, pair, blockNumber]); // On load
-
-    const onUpdate = async (blockNumber) => {
-        setBlockNumber(blockNumber)
-    }
 
     const buildOrderBook = async () => {
         const numItems = await pair.contract.numOrders();
@@ -40,14 +35,14 @@ function OrderBook({provider, address, pair, myPos, sdenom, pdenom, oraclePrice}
         <VStack width='50%' p={4} borderRadius='md' shadow='lg' bg='gray.50'>
         <Box>Bids:</Box>
         {bids.map((o)=><Order key={o.orderId} 
-                             provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice}
-                             order={o}/>)}
+                            provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} blockNumber={blockNumber}
+                            order={o}/>)}
         </VStack>
         <VStack width='50%' p={4} borderRadius='md' shadow='lg' bg='gray.50'>
         <Box>Offers:</Box>
         {offers.map((o)=><Order key={o.orderId} 
-                             provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice}
-                             order={o}/>)}
+                            provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} blockNumber={blockNumber}
+                            order={o}/>)}
         </VStack>
     </HStack>);
 }

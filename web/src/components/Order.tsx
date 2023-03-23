@@ -22,7 +22,7 @@ import {
     SliderMark,
   } from '@chakra-ui/react'
 
-function Order({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, order}) {
+function Order({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, blockNumber, order}) {
     const vdenom = BigNumber.from(10).pow(BigNumber.from(18))
 
     const onOrderClicked = async () => {

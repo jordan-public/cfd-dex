@@ -4,7 +4,7 @@ import { Text, Box, Stat, StatLabel, StatNumber, StatHelpText, StatArrow, StatGr
 import { BigNumber } from 'ethers'
 import uint256ToDecimal from '../utils/uint256ToDecimal';
 
-function Position({provider, address, pair, myPos, sdenom, pdenom, oraclePrice}) {
+function Position({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, blockNumber}) {
     const vdenom = BigNumber.from(10).pow(BigNumber.from(18))
 
     return (<Box bg={myPos.collateral.lt(myPos.liquidationCollateralLevel) ? 'red.100' : 'green.100'} borderRadius='md' shadow='lg' align='center' p={6}><StatGroup gap={20}>
