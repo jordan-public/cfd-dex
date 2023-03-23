@@ -23,7 +23,7 @@ contract CFDOrderBookTest is Test {
     uint256 ENTRY_MARGIN =          100000000000000000; // 0.1 = 10%
     uint256 MAINTENANCE_MARGIN =     50000000000000000; // 0.05 = 5%
     uint256 LIQUIDATION_PENALTY =    20000000000000000; // 0.02 = 2%
-    uint256 DUST =                   10000000000000000; // 0.01
+    uint256 DUST =                   10000; // 0.01 (6 decimals)
     
     // Test accounts from passphrase in env (not in repo)
     address constant account0 = 0x17eE56D300E3A0a6d5Fd9D56197bFfE968096EdB;
@@ -75,27 +75,23 @@ contract CFDOrderBookTest is Test {
         assertEq(amount, ob.withdrawMax(), "withdrawMax amount mismatch");
     }
 
-    function testBadCall() public {
-        uint256 amount = 10 * 10**USDC.decimals();
+    function testBidOffer() public {
+        uint256 amount = 100 * 10**USDC.decimals();
         USDC.approve(address(ob), amount);
         ob.deposit(amount);
         uint256 price = ob.getPrice();
-        ( , , , int256 c) = ob.positions(1);
-        assertEq(int256(amount), c, "Bad Internal collateral");
-        (   uint256 id,
-            int256 holding,
-            int256 holdingAveragePrice,
-            int256 collateral,
-            int256 liquidationCollateralLevel,
-            int256 unrealizedGain) = ob.getMyPosition();
-        assertEq(0, holding, "Bad holding");
-        assertEq(0, holdingAveragePrice, "Bad HAP");
-        assertEq(int256(amount), collateral, "Bad collateral");
-        assertEq(0, liquidationCollateralLevel, "Bad LCL");
-        assertEq(0, unrealizedGain, "Bad UG");
-        int256 rc = ob.getRequiredEntryCollateral(id, price);
-        assertEq(0, rc, "Bad REC");
-        ob.withdraw(amount);
+        uint256 pdenom = ob.priceDenominator();
+        ob.make(int256(((amount * pdenom) / price) / 3), price * 9999 / 10000); // Bid
+        ob.make(- int256(((amount * pdenom) / price) / 3), price * 10001 / 10000); // Offer
+    }
+
+    function testBadCall() public {
+        uint256 amount = 100 * 10**USDC.decimals();
+        USDC.approve(address(ob), amount);
+        ob.deposit(amount);
+        uint256 price = ob.getPrice();
+        uint256 pdenom = ob.priceDenominator();
+        ob.make(int256(((amount * pdenom) / price) / 2), price);
     }
 
 }

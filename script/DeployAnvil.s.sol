@@ -23,8 +23,8 @@ contract Deploy is Script {
     uint256 ENTRY_MARGIN =          100000000000000000; // 0.1 = 10%
     uint256 MAINTENANCE_MARGIN =     50000000000000000; // 0.05 = 5%
     uint256 LIQUIDATION_PENALTY =    20000000000000000; // 0.02 = 2%
-    uint256 DUST =                   10000000000000000; // 0.01
-    
+    uint256 DUST =                   10000; // 0.01 (6 decimals)
+        
     // Test accounts from passphrase in env (not in repo)
     address constant account0 = 0x17eE56D300E3A0a6d5Fd9D56197bFfE968096EdB;
     address constant account1 = 0xFE6A93054b240b2979F57e49118A514F75f66D4e;

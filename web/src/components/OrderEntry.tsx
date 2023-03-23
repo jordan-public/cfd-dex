@@ -73,7 +73,7 @@ console.log("amt", BigNumber.from(decimalToUint256(value, sdenom)), BigNumber.fr
 
     const make = async (a) => {
         try{
-            const tx = await pair.contract.make(BigNumber.from(decimalToUint256(a, vdenom), BigNumber.from(decimalToUint256(limitPrice, pdenom))));
+            const tx = await pair.contract.make(BigNumber.from(decimalToUint256(a, vdenom)), BigNumber.from(decimalToUint256(limitPrice, pdenom)));
             const r = await tx.wait();
             window.alert('Completed. Block hash: ' + r.blockHash);
          } catch(e) {
