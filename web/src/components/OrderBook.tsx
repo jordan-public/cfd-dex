@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 import React from 'react';
-import { HStack, VStack } from '@chakra-ui/react'
+import { HStack, VStack, Box } from '@chakra-ui/react'
 import { BigNumber } from 'ethers';
+import Order from './Order'
 
 function OrderBook({provider, address, pair, myPos, sdenom, pdenom, oraclePrice}) {
     const [bids, setBids] = React.useState([])
@@ -23,29 +24,30 @@ function OrderBook({provider, address, pair, myPos, sdenom, pdenom, oraclePrice}
         const numItems = await pair.contract.numOrders();
         let blist = []
         let olist = []
-        for (let i = BigNumber.from(0); i.lt(numItems); i.add(BitNumber.from(1))) {
-            order = await pair.contract.orderStatus(i);
-            order.orderId = i;
+        for (let i = BigNumber.from(0); i.lt(numItems); i = i.add(BigNumber.from(1))) {
+            const order = {...(await pair.contract.orderStatus(i)), ...{orderId: i}};
             if (order.amount.gt(BigNumber.from(0))) blist.push(order)
             if (order.amount.lt(BigNumber.from(0))) olist.push(order)
             // if (order.amount.isZero()) ignore
         }
-        blist.sort((a, b) => { return a.lt(b) ? 1 : -1 })
-        olist.sort((a, b) => { return a.gt(b) ? 1 : -1 })
+        blist.sort((a, b) => { return a.limitPrice.lt(b.limitPrice) ? 1 : -1 })
+        olist.sort((a, b) => { return a.limitPrice.gt(b.limitPrice) ? 1 : -1 })
         setBids(blist);
         setOffers(olist);
     }
 
-    return (<HStack>
-        <VStack>
+    return (<HStack width='100%' p={4} align='top'>
+        <VStack width='50%' p={4} borderRadius='md' shadow='lg' bg='gray.50'>
+        <Box>Bids:</Box>
         {bids.map((o)=><Order key={o.orderId} 
                              provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice}
-                             order={order}/>)}
+                             order={o}/>)}
         </VStack>
-        <VStack>
-        {bids.map((o)=><Order key={o.orderId} 
+        <VStack width='50%' p={4} borderRadius='md' shadow='lg' bg='gray.50'>
+        <Box>Offers:</Box>
+        {offers.map((o)=><Order key={o.orderId} 
                              provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice}
-                             order={order}/>)}
+                             order={o}/>)}
         </VStack>
     </HStack>);
 }

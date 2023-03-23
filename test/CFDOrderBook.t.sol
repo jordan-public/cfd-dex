@@ -91,7 +91,7 @@ contract CFDOrderBookTest is Test {
         ob.deposit(amount);
         uint256 price = ob.getPrice();
         uint256 pdenom = ob.priceDenominator();
-        ob.make(int256(((amount * pdenom) / price) / 2), price);
+        ob.make(int256((((amount * pdenom) / price) * 10**18 / 10**USDC.decimals()) / 2), price);
     }
 
 }
