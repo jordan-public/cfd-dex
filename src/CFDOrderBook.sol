@@ -235,7 +235,7 @@ contract CFDOrderBook is ICFDOrderBook {
         safeTransfer(settlementCurrency, msg.sender, amount);
     }
 
-    function withdrawMax() external returns (uint256 amount) {
+    function withdrawMax() public returns (uint256 amount) {
         uint256 myPositionId = positionIds[msg.sender];
         int256 amountWithdrawable = positions[myPositionId].collateral -
             getRequiredEntryCollateral(myPositionId, getPrice());
@@ -475,7 +475,6 @@ contract CFDOrderBook is ICFDOrderBook {
     function withdrawFees(
         address payTo
     ) external onlyOwner returns (uint256 collected) {
-        console.log("withdraw fees");
         safeTransfer(settlementCurrency, payTo, feesToCollect);
         collected = feesToCollect;
         feesToCollect = 0;
@@ -490,6 +489,7 @@ contract CFDOrderBook is ICFDOrderBook {
             myPositionId = positions.length;
             positions.push();
             positionIds[msg.sender] = myPositionId;
+            positions[myPositionId].owner = msg.sender;
         }
         positions[myPositionId].collateral += int256(desiredCollateral);
 

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.13;
 
+import "forge-std/console.sol";
 import "./interfaces/IFlashCollateralBeneficiary.sol";
 import "./interfaces/ICFDOrderBook.sol";
 
@@ -33,5 +34,8 @@ contract FlashLiquidate is IFlashCollateralBeneficiary {
         orderIds = _orderIds;
         amounts = _amounts;
         cfdOrderBook.flashCollateralizeAndExecute(desiredCollateral);
+        uint256 w = cfdOrderBook.withdrawMax();
+        cfdOrderBook.settlementCurrency().transfer(msg.sender, w);
+        console.log("Flash collateral profit: ", w);
     }
 }
