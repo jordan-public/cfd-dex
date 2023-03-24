@@ -5,7 +5,7 @@ import { BigNumber } from 'ethers'
 import uint256ToDecimal from '../utils/uint256ToDecimal';
 
 function MarketParams({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, updateTrigger, triggerUpdate}) {
-    const vdenomperc = BigNumber.from(10).pow(BigNumber.from(18))
+    const vdenomperc = BigNumber.from(10).pow(BigNumber.from(16))
     const vdenom = BigNumber.from(10).pow(BigNumber.from(18))
     const [entryMargin, setEntryMargin] = React.useState(null);
     const [maintenanceMargin, setMaintenanceMargin] = React.useState(null);
