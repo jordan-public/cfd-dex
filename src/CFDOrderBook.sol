@@ -218,6 +218,7 @@ contract CFDOrderBook is ICFDOrderBook {
             myPositionId = positions.length;
             positions.push();
             positionIds[msg.sender] = myPositionId;
+            positions[myPositionId].owner = msg.sender;
         }
         positions[myPositionId].collateral += int256(amount);
     }
