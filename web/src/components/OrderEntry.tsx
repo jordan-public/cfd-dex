@@ -6,7 +6,7 @@ import decimalToUint256 from '../utils/decimalToUint256'
 import aIERC20 from '../artifacts/IERC20.json'
 import { ethers, BigNumber } from 'ethers'
 
-function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, blockNumber}) {
+function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, updateTrigger, triggerUpdate}) {
     const vdenom = BigNumber.from(10).pow(BigNumber.from(18))
     const [value, setValue] = React.useState(0)
     const [amount, setAmount] = React.useState(0)
@@ -31,6 +31,7 @@ function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice
         try{
             const tx = await settlementCurrencyContract.approve(pair.contract.address, needed)
             const r = await tx.wait()
+            // triggerUpdate() - not needed as change is not visible
             window.alert('Completed. Block hash: ' + r.blockHash)
             return needed
         } catch(e) {
@@ -44,6 +45,7 @@ function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice
         try{
             const tx = await pair.contract.deposit(BigNumber.from(decimalToUint256(value, sdenom)))
             const r = await tx.wait()
+            triggerUpdate()
             window.alert('Completed. Block hash: ' + r.blockHash)
          } catch(e) {
             window.alert(e.message + "\n" + (e.data?e.data.message:""))
@@ -54,6 +56,7 @@ function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice
         try{
             const tx = await pair.contract.withdraw(BigNumber.from(decimalToUint256(value, sdenom)))
             const r = await tx.wait()
+            triggerUpdate()
             window.alert('Completed. Block hash: ' + r.blockHash)
          } catch(e) {
             window.alert(e.message + "\n" + (e.data?e.data.message:""))
@@ -62,21 +65,23 @@ function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice
 
     const onWitdrawMax = async () => {
         try{
-            const tx = await pair.contract.withdrawMax();
-            const r = await tx.wait();
-            window.alert('Completed. Block hash: ' + r.blockHash);
+            const tx = await pair.contract.withdrawMax()
+            const r = await tx.wait()
+            triggerUpdate()
+            window.alert('Completed. Block hash: ' + r.blockHash)
          } catch(e) {
-            window.alert(e.message + "\n" + (e.data?e.data.message:""));
+            window.alert(e.message + "\n" + (e.data?e.data.message:""))
         }
     }
 
     const make = async (a) => {
         try{
-            const tx = await pair.contract.make(BigNumber.from(decimalToUint256(a, vdenom)), BigNumber.from(decimalToUint256(limitPrice, pdenom)));
-            const r = await tx.wait();
-            window.alert('Completed. Block hash: ' + r.blockHash);
+            const tx = await pair.contract.make(BigNumber.from(decimalToUint256(a, vdenom)), BigNumber.from(decimalToUint256(limitPrice, pdenom)))
+            const r = await tx.wait()
+            triggerUpdate()
+            window.alert('Completed. Block hash: ' + r.blockHash)
          } catch(e) {
-            window.alert(e.message + "\n" + (e.data?e.data.message:""));
+            window.alert(e.message + "\n" + (e.data?e.data.message:""))
         }
     }
 

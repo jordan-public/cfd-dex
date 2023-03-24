@@ -4,7 +4,7 @@ import { HStack, VStack, Box } from '@chakra-ui/react'
 import { BigNumber } from 'ethers';
 import Order from './Order'
 
-function OrderBook({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, blockNumber}) {
+function OrderBook({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, updateTrigger, triggerUpdate}) {
     const [bids, setBids] = React.useState([])
     const [offers, setOffers] = React.useState([])
 
@@ -13,7 +13,7 @@ function OrderBook({provider, address, pair, myPos, sdenom, pdenom, oraclePrice,
             if (!pair) return;
             await buildOrderBook();
         }) ();
-    }, [provider, address, pair, blockNumber]); // On load
+    }, [provider, address, pair, updateTrigger]); // On load
 
     const buildOrderBook = async () => {
         const numItems = await pair.contract.numOrders();
@@ -35,13 +35,13 @@ function OrderBook({provider, address, pair, myPos, sdenom, pdenom, oraclePrice,
         <VStack width='50%' p={4} borderRadius='md' shadow='lg' bg='gray.50'>
         <Box>Bids:</Box>
         {bids.map((o)=><Order key={o.orderId} 
-                            provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} blockNumber={blockNumber}
+                            provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} updateTrigger={updateTrigger} triggerUpdate={triggerUpdate}
                             order={o}/>)}
         </VStack>
         <VStack width='50%' p={4} borderRadius='md' shadow='lg' bg='gray.50'>
         <Box>Offers:</Box>
         {offers.map((o)=><Order key={o.orderId} 
-                            provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} blockNumber={blockNumber}
+                            provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} updateTrigger={updateTrigger} triggerUpdate={triggerUpdate}
                             order={o}/>)}
         </VStack>
     </HStack>);

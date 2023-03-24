@@ -22,7 +22,7 @@ import {
     SliderMark,
   } from '@chakra-ui/react'
 
-function Order({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, blockNumber, order}) {
+function Order({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, updateTrigger, triggerUpdate, order}) {
     const vdenom = BigNumber.from(10).pow(BigNumber.from(18))
 
     const onOrderClicked = async () => {
@@ -33,21 +33,23 @@ function Order({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, blo
 
     const cancelOrder = async () => {
         try{
-            const tx = await pair.contract.cancel(order.orderId);
-            const r = await tx.wait();
+            const tx = await pair.contract.cancel(order.orderId)
+            const r = await tx.wait()
+            triggerUpdate()
             window.alert('Completed. Block hash: ' + r.blockHash);
          } catch(e) {
-            window.alert(e.message + "\n" + (e.data?e.data.message:""));
+            window.alert(e.message + "\n" + (e.data?e.data.message:""))
         }
     }
 
     const takeOrder = async (sliderValue) => {
         try{
-            const tx = await pair.contract.take(order.orderId, BigNumber.from(0).sub(order.amount).mul(BigNumber.from(sliderValue)).div(BigNumber.from(100)));
-            const r = await tx.wait();
-            window.alert('Completed. Block hash: ' + r.blockHash);
+            const tx = await pair.contract.take(order.orderId, BigNumber.from(0).sub(order.amount).mul(BigNumber.from(sliderValue)).div(BigNumber.from(100)))
+            const r = await tx.wait()
+            triggerUpdate()
+            window.alert('Completed. Block hash: ' + r.blockHash)
          } catch(e) {
-            window.alert(e.message + "\n" + (e.data?e.data.message:""));
+            window.alert(e.message + "\n" + (e.data?e.data.message:""))
         }
     }
 

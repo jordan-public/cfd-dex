@@ -15,13 +15,14 @@ import {
     PopoverAnchor,
   } from '@chakra-ui/react'
 
-function LiqudationCandidate({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, blockNumber, liquidationCandidate}) {
+function LiqudationCandidate({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, updateTrigger, triggerUpdate, liquidationCandidate}) {
     const vdenom = BigNumber.from(10).pow(BigNumber.from(18))
 
     const liquidatePosition = async () => {
         try{
             const tx = await pair.contract.liquidate(order.orderId);
             const r = await tx.wait();
+            triggerUpdate()
             window.alert('Completed. Block hash: ' + r.blockHash);
          } catch(e) {
             window.alert(e.message + "\n" + (e.data?e.data.message:""));
