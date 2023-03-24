@@ -7,6 +7,7 @@ tmp/
 **/.DS_Store
 
 web/src/artifacts/
+!web/src/artifacts/.gitkeep
 
 broadcast/DeployAnvil.s.sol/*/*
 #!broadcast/DeployAnvil.s.sol/*/run-latest.json

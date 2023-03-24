@@ -45,7 +45,7 @@ contract CFDOrderBookTest is Test {
         // Test USDC token
         USDC = new ERC20("Test USDC", "USDC", 6, 10**6 * 10**6); // 1M total supply
         console.log("Test USDC address: ", address(USDC));
-        USDC.transfer(account1, 100000 * 10**USDC.decimals());
+        USDC.transfer(account1, 200000 * 10**USDC.decimals());
         USDC.transfer(account2, 100000 * 10**USDC.decimals());
         USDC.transfer(account3, 100000 * 10**USDC.decimals());
 
