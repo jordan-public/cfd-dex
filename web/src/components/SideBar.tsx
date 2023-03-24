@@ -4,14 +4,18 @@ import { Button, ButtonGroup } from '@chakra-ui/react'
 import { ethers } from 'ethers';
 import aCFDOrderBookFactory from '../artifacts/CFDOrderBookFactory.json';
 import aICFDOrderBook from '../artifacts/ICFDOrderBook.json';
+import aIERC20 from '../artifacts/IERC20.json';
 
 function SideBar({provider, address, setPair}) {
     const [pairList, setPairList] = React.useState([]);
 
     const getOB = async (cICFDOrderBook) => {
-        const signer = provider.getSigner();
-        const obDescription = await cICFDOrderBook.getDescription();
-        return {Description: obDescription, contract: cICFDOrderBook};
+        const signer = provider.getSigner()
+        const obDescription = await cICFDOrderBook.getDescription()
+        const scAddr = await cICFDOrderBook.settlementCurrency()
+        const cSettlementCurrency = new ethers.Contract(scAddr, aIERC20.abi, signer)
+        const scSymbol = await cSettlementCurrency.symbol()
+        return {description: obDescription, contract: cICFDOrderBook, settlementCurrencyContract: cSettlementCurrency, settlementCurrencySymbol: scSymbol};
     }
 
     React.useEffect(() => {
@@ -34,7 +38,7 @@ function SideBar({provider, address, setPair}) {
     return (
         <ButtonGroup gap='4' flexDirection='column' alignItems='center' margin={1}>
             <br/>
-            {pairList.map((p) => <Button key={p.Description} colorScheme='blue' size='sm' width='80%' align='center' onClick={()=>setPair(p)}>{p.Description}</Button>)}
+            {pairList.map((p) => <Button key={p.description} colorScheme='blue' size='sm' width='80%' align='center' onClick={()=>setPair(p)}>{p.description}</Button>)}
         </ButtonGroup>
     );
 }

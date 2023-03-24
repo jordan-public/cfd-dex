@@ -41,7 +41,7 @@ function MarketParams({provider, address, pair, myPos, sdenom, pdenom, oraclePri
 
         <Stat>
           <StatNumber>{dust}</StatNumber>
-          <StatLabel>{"Min. trade size (" + pair.Description + ")"}</StatLabel>
+          <StatLabel>{"Min. trade size (" + pair.description + ")"}</StatLabel>
         </Stat>
     </StatGroup></Box>);
 }

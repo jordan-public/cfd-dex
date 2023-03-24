@@ -34,8 +34,8 @@ function LiqudationCandidate({provider, address, pair, myPos, sdenom, pdenom, or
             <PopoverTrigger>
                 <Box>
                 Owner: {liquidationCandidate.owner.toString()} <br/>
-                Holding: {uint256ToDecimal(liquidationCandidate.holding, vdenom)} <br/>
-                Collateral shortage: {uint256ToDecimal(liquidationCandidate.liquidationCollateralLevel.sub(liquidationCandidate.collateral), sdenom)}               
+                Holding: {uint256ToDecimal(liquidationCandidate.holding, vdenom) + " " + pair.description} <br/>
+                Collateral shortage: {uint256ToDecimal(liquidationCandidate.liquidationCollateralLevel.sub(liquidationCandidate.collateral), sdenom) + " " + pair.settlementCurrencySymbol}               
                 </Box>
             </PopoverTrigger>
             <PopoverContent>

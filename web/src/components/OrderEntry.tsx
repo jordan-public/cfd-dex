@@ -11,25 +11,17 @@ function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice
     const [value, setValue] = React.useState(0)
     const [amount, setAmount] = React.useState(0)
     const [limitPrice, setLimitPrice] = React.useState(0)
-    const [settlementCurrencyContract, setSettlementCurrencyContract] = React.useState(null)
 
     React.useEffect(() => {
         setLimitPrice(parseFloat(uint256ToDecimal(oraclePrice, pdenom)));
     }, [pair, pdenom, oraclePrice])
 
-    React.useEffect(() => {
-        (async () => {const scAddr = await pair.contract.settlementCurrency();
-        const signer = provider.getSigner();
-        setSettlementCurrencyContract(new ethers.Contract(scAddr, aIERC20.abi, signer));
-        }) ();
-    }, [pair.contract, provider]);
-
     const authorizeIfNeeded = async () => {
-        const a = await settlementCurrencyContract.allowance(address, pair.contract.address)
+        const a = await pair.settlementCurrencyContract.allowance(address, pair.contract.address)
         const needed = BigNumber.from(decimalToUint256(value, sdenom))
         if (a.gte(needed)) return a
         try{
-            const tx = await settlementCurrencyContract.approve(pair.contract.address, needed)
+            const tx = await pair.settlementCurrencyContract.approve(pair.contract.address, needed)
             const r = await tx.wait()
             // triggerUpdate() - not needed as change is not visible
             window.alert('Completed. Block hash: ' + r.blockHash)
@@ -93,7 +85,6 @@ function OrderEntry({provider, address, pair, myPos, sdenom, pdenom, oraclePrice
         await make(-amount);
     }
 
-    if (!settlementCurrencyContract) return(<></>)
     return (<Box borderRadius='md' shadow='lg' align='center' p={6}>
         <HStack p={4}>
             <NumberInput  value={value} onChange={v => setValue(parseFloat(v))} precision={2}>

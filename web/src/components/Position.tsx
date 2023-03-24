@@ -10,27 +10,27 @@ function Position({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, 
     return (<Box bg={myPos.collateral.lt(myPos.liquidationCollateralLevel) ? 'red.100' : 'green.100'} borderRadius='md' shadow='lg' align='center' p={6}><StatGroup gap={20}>
         <Stat>
           <StatNumber>{uint256ToDecimal(oraclePrice, pdenom)}</StatNumber>
-          <StatLabel>{pair.Description + " Oracle Price"}</StatLabel>
+          <StatLabel>{pair.description + " Oracle Price"}</StatLabel>
         </Stat>
       
         <Stat>
           <StatNumber>{uint256ToDecimal(myPos.holding, vdenom)}</StatNumber>
-          <StatLabel>Holding</StatLabel>
+          <StatLabel>{pair.description + " Holding"}</StatLabel>
         </Stat>
       
         <Stat>
           <StatNumber>{uint256ToDecimal(myPos.holdingAveragePrice, pdenom)}</StatNumber>
-          <StatLabel>Avg. Price</StatLabel>
+          <StatLabel>{"Avg. " + pair.description + " Holding Price"}</StatLabel>
         </Stat>
 
         <Stat>
           <StatNumber>{uint256ToDecimal(myPos.collateral, sdenom)}</StatNumber>
-          <StatLabel>Collateral</StatLabel>
+          <StatLabel>{pair.settlementCurrencySymbol + " Collateral"}</StatLabel>
         </Stat>
 
         <Stat>
           <StatNumber>{uint256ToDecimal(myPos.liquidationCollateralLevel, sdenom)}</StatNumber>
-          <StatLabel>Liq. Collateral Level</StatLabel>
+          <StatLabel>{pair.settlementCurrencySymbol + " Liq. Collateral Level"}</StatLabel>
         </Stat>
 
         <Stat>
@@ -39,7 +39,7 @@ function Position({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, 
             <StatArrow type={myPos.unrealizedGain.gte(BigNumber.from(0)) ? 'increase' : 'decrease'} />
             {uint256ToDecimal(myPos.unrealizedGain.mul(BigNumber.from(10000)).div(myPos.holding.abs()), BigNumber.from(100))} %
           </StatHelpText>}
-          <StatLabel>Unrealized Gain</StatLabel>
+          <StatLabel>{pair.settlementCurrencySymbol + " Unrealized Gain"}</StatLabel>
         </Stat>
     </StatGroup></Box>);
 }
