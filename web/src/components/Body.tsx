@@ -5,6 +5,7 @@ import Position from './Position'
 import OrderEntry from './OrderEntry'
 import OrderBook from './OrderBook'
 import Liquidations from './Liquidations'
+import MarketParams from './MarketParams'
 import { BigNumber } from 'ethers'
 
 function Body({provider, address, pair}) {
@@ -46,13 +47,14 @@ console.log("Block ", blockNumber);
         }
     }); // Run on each render because onUpdate is a closure
 
-    if (!address || !pair || !myPos || sdenom.isZero() || pdenom.isZero() || oraclePrice.isZero()) return(<></>);
+    if (!pair || !address || !pair || !myPos || sdenom.isZero() || pdenom.isZero() || oraclePrice.isZero()) return(<></>);
     return (<VStack>
         <br/>
         <Position provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} updateTrigger={updateTrigger} triggerUpdate={triggerUpdate}/>
         <OrderEntry provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} updateTrigger={updateTrigger} triggerUpdate={triggerUpdate}/>
         <OrderBook provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} updateTrigger={updateTrigger} triggerUpdate={triggerUpdate}/>
         <Liquidations provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} updateTrigger={updateTrigger} triggerUpdate={triggerUpdate}/>
+        <MarketParams provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} updateTrigger={updateTrigger} triggerUpdate={triggerUpdate}/>
     </VStack>);
 }
 

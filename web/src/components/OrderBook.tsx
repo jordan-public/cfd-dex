@@ -20,7 +20,7 @@ function OrderBook({provider, address, pair, myPos, sdenom, pdenom, oraclePrice,
         let blist = []
         let olist = []
         for (let i = BigNumber.from(0); i.lt(numItems); i = i.add(BigNumber.from(1))) {
-            const order = {...(await pair.contract.orderStatus(i)), ...{orderId: i}};
+            const order = {...(await pair.contract.orderStatus(i)), ...{orderId: i}}
             if (order.amount.gt(BigNumber.from(0))) blist.push(order)
             if (order.amount.lt(BigNumber.from(0))) olist.push(order)
             // if (order.amount.isZero()) ignore

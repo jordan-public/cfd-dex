@@ -18,7 +18,7 @@ function Liquidations({provider, address, pair, myPos, sdenom, pdenom, oraclePri
         const numItems = await pair.contract.numPositions();
         let list = []
         for (let i = BigNumber.from(0); i.lt(numItems); i = i.add(BigNumber.from(1))) {
-            const position = await pair.contract.getPosition(i)
+            const position = {...(await pair.contract.getPosition(i)), ...{positionId: i}}
             if (position.collateral.lt(position.liquidationCollateralLevel)) list.push(position)
         }
         setLiquidationList(list);
@@ -27,7 +27,7 @@ function Liquidations({provider, address, pair, myPos, sdenom, pdenom, oraclePri
     return (<HStack width='100%' p={4} align='top'>
         <VStack width='100%' p={4} borderRadius='md' shadow='lg' bg='gray.50'>
         <Box>Liquidation candidates:</Box>
-        {liquidationList.map((p)=><Order key={p.positionOwner} 
+        {liquidationList.map((p)=><LiqudationCandidate key={p.positionOwner} 
                              provider={provider} address={address} pair={pair} myPos={myPos} sdenom={sdenom} pdenom={pdenom} oraclePrice={oraclePrice} updateTrigger={updateTrigger} triggerUpdate={triggerUpdate}
                              liquidationCandidate={p}/>)}
         </VStack>

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 import React from 'react';
-import { Text, Box, Stat, StatLabel, StatNumber, StatHelpText, StatArrow, StatGroup } from '@chakra-ui/react'
+import { Box, Stat, StatLabel, StatNumber, StatHelpText, StatArrow, StatGroup } from '@chakra-ui/react'
 import { BigNumber } from 'ethers'
 import uint256ToDecimal from '../utils/uint256ToDecimal';
 
@@ -10,7 +10,7 @@ function Position({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, 
     return (<Box bg={myPos.collateral.lt(myPos.liquidationCollateralLevel) ? 'red.100' : 'green.100'} borderRadius='md' shadow='lg' align='center' p={6}><StatGroup gap={20}>
         <Stat>
           <StatNumber>{uint256ToDecimal(oraclePrice, pdenom)}</StatNumber>
-          <StatLabel><Text fontWeight='bold' fontSize='xl'>{pair.Description}</Text> Oracle Price</StatLabel>
+          <StatLabel>{pair.Description + " Oracle Price"}</StatLabel>
         </Stat>
       
         <Stat>
@@ -29,8 +29,8 @@ function Position({provider, address, pair, myPos, sdenom, pdenom, oraclePrice, 
         </Stat>
 
         <Stat>
-          <StatNumber>{uint256ToDecimal(myPos.liquidationCollateralLevel, pdenom)}</StatNumber>
-          <StatLabel>Liq. Price</StatLabel>
+          <StatNumber>{uint256ToDecimal(myPos.liquidationCollateralLevel, sdenom)}</StatNumber>
+          <StatLabel>Liq. Collateral Level</StatLabel>
         </Stat>
 
         <Stat>

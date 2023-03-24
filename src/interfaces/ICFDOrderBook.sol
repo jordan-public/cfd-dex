@@ -12,6 +12,14 @@ interface ICFDOrderBook {
 
     function priceDenominator() external view returns (uint256);
 
+    function entryMargin() external view returns (uint256);
+
+    function maintenanceMargin() external view returns (uint256);
+
+    function liquidationPentalty() external view returns (uint256);
+    
+    function dust() external view returns (uint256);
+
     function getPrice() external view returns (uint256);
 
     function setMockPrice(uint256 price) external;

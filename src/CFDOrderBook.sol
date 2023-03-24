@@ -27,10 +27,10 @@ contract CFDOrderBook is ICFDOrderBook {
     uint256 public settlementCurrencyDenominator;
     uint256 public priceDenominator;
     // BTW, position amounts and collaterals are always 18 decimals (1 ether)
-    uint256 entryMargin;
-    uint256 maintenanceMargin;
-    uint256 liquidationPentalty;
-    uint256 dust;
+    uint256 public entryMargin;
+    uint256 public maintenanceMargin;
+    uint256 public liquidationPentalty;
+    uint256 public dust;
 
     uint256 mockPrice; // = 0; for testing
 

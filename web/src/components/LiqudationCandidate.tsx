@@ -20,7 +20,7 @@ function LiqudationCandidate({provider, address, pair, myPos, sdenom, pdenom, or
 
     const liquidatePosition = async () => {
         try{
-            const tx = await pair.contract.liquidate(order.orderId);
+            const tx = await pair.contract.liquidate(liquidationCandidate.positionId);
             const r = await tx.wait();
             triggerUpdate()
             window.alert('Completed. Block hash: ' + r.blockHash);
@@ -29,13 +29,13 @@ function LiqudationCandidate({provider, address, pair, myPos, sdenom, pdenom, or
         }
     }
 
-    return (<Box width='100%' borderRadius='md' shadow='lg' bg={order.amount.lt(BigNumber.from(0)) ? 'red.50' : 'green.50'}>
+    return (<Box width='100%' borderRadius='md' shadow='lg' bg='gray.100'>
         <Popover>
             <PopoverTrigger>
                 <Box>
-                Owner: {liquidationCandidate.positionOwner.toString()} <br/>
+                Owner: {liquidationCandidate.owner.toString()} <br/>
                 Holding: {uint256ToDecimal(liquidationCandidate.holding, vdenom)} <br/>
-                Collateral shortage: {uint256ToDecimal(liquidationCandidate.positionOwner.sub(liquidationCandidate.liquidationCollateralLevel), sdenom)}               
+                Collateral shortage: {uint256ToDecimal(liquidationCandidate.liquidationCollateralLevel.sub(liquidationCandidate.collateral), sdenom)}               
                 </Box>
             </PopoverTrigger>
             <PopoverContent>
