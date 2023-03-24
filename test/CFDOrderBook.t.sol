@@ -90,7 +90,7 @@ contract CFDOrderBookTest is Test {
         ob.make(- int256(((amount * pdenom) / price) / 3), price * 10001 / 10000); // Offer
     }
 
-    function testBadCall() public {
+    function testFlashTrillionCollateral() public {
         // Owner sets mock oracle price of EUR/USD ro 1.1
         vm.startPrank(factory.owner(), factory.owner());
         obi.setMockPrice(110000000);
@@ -148,6 +148,11 @@ contract CFDOrderBookTest is Test {
         uint256 has = USDC.balanceOf(account4);
         console.log("Profit", has-had);
         vm.stopPrank();
+    }
+
+    function testBadCall() public {
+        // Put test to be debugged here
+        return;
     }
 
 }
