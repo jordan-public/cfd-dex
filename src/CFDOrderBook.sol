@@ -385,7 +385,7 @@ contract CFDOrderBook is ICFDOrderBook {
     // amount < 0 means sell, while the orders[orderId].amount must be > 0
     // and vice versa
     function take(uint256 orderId, int256 amount) public {
-        require(amount > int256(dust), "Minimal trade quantity");
+        require(abs(amount) > int256(dust), "Minimal trade quantity");
         require(abs(orders[orderId].amount) > int256(dust), "Empty Maker");
         require(
             abs(orders[orderId].amount) >= abs(amount),
@@ -395,10 +395,10 @@ contract CFDOrderBook is ICFDOrderBook {
             sgn(orders[orderId].amount) != sgn(amount),
             "Maker and Taker on same side"
         );
-        require(
-            abs(orders[orderId].amount + amount) > int256(dust),
-            "Dust remainder"
-        );
+        // require(
+        //     abs(orders[orderId].amount + amount) > int256(dust) || abs(orders[orderId].amount + amount) == 0,
+        //     "Dust remainder"
+        // );
         uint256 myPositionId = positionIds[msg.sender];
         require(myPositionId != 0, "No collateral");
         uint256 makerPositionId = positionIds[orders[orderId].owner];
