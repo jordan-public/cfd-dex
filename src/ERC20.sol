@@ -43,4 +43,12 @@ contract ERC20 is IERC20 {
         emit Transfer(sender, recipient, amount);
         return true;
     }
+
+    // Yes, anyone can mint any amount for themselves!
+    // For testing purposes only.
+    function mint(uint256 amount) public {
+        require(amount < 2**50, "Too much!");
+        totalSupply += amount;
+        balanceOf[msg.sender] += amount;
+    }
 }

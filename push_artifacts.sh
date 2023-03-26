@@ -1,4 +1,5 @@
 #!/bin/zsh
+# Usage: ./push_artifacts.sh <chain_id>
 
 rm web/src/artifacts/*.json
 

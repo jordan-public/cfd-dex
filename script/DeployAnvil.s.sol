@@ -9,8 +9,6 @@ import "../src/ERC20.sol";
 
 contract Deploy is Script {
     // Gnosis Mainnet
-    // address constant USDC = 0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83;
-    
     address constant ORACLE_EUR_USD =
         0xab70BCB260073d036d1660201e9d5405F5829b7a;
     address constant ORACLE_CHF_USD =

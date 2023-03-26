@@ -11,8 +11,20 @@ web/src/artifacts/
 
 broadcast/DeployAnvil.s.sol/*/*
 #!broadcast/DeployAnvil.s.sol/*/run-latest.json
-broadcast/DeployPolygon.s.sol/*/*
-!broadcast/DeployPolygon.s.sol/*/run-latest.json
+broadcast/DeployGnosisChiado.s.sol/*/*
+!broadcast/DeployGnosisChiado.s.sol/*/run-latest.json
+broadcast/DeployOptimismGoerli.s.sol/*/*
+!broadcast/DeployOptimismGoerli.s.sol/*/run-latest.json
+broadcast/DeployScrollAlpha.s.sol/*/*
+!broadcast/DeployScrollAlpha.s.sol/*/run-latest.json
+broadcast/DeployZkevmTestnet.s.sol/*/*
+!broadcast/DeployZkevmTestnet.s.sol/*/run-latest.json
+broadcast/DeployMantleTestnet.s.sol/*/*
+!broadcast/DeployMantleTestnet.s.sol/*/run-latest.json
+broadcast/DeployTaikoAlpha-2.s.sol/*/*
+!broadcast/DeployTaikoAlpha-2.s.sol/*/run-latest.json
+broadcast/DeployZksyncEraTestnet.s.sol/*/*
+!broadcast/DeployZksyncEraTestnet.s.sol/*/run-latest.json
 # Ignores development broadcast logs
 # !/broadcast
 # /broadcast/*/31337/

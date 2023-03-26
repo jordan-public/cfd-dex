@@ -152,6 +152,8 @@ contract CFDOrderBookTest is Test {
 
     function testBadCall() public {
         // Put test to be debugged here
+        uint256 amount = 10 * 10**USDC.decimals();
+        USDC.approve(address(ob), amount);
         return;
     }
 

@@ -260,8 +260,9 @@ contract CFDOrderBook is ICFDOrderBook {
         price = uint256(feedPrice);
     }
 
+    // DANGEROUS!!! WARNING - Use only for testing! Remove before mainnet deployment.
     function setMockPrice(uint256 price) external {
-        require(msg.sender == ICFDOrderBookFactory(owner).owner(), "Unauthorized");
+        // require(msg.sender == ICFDOrderBookFactory(owner).owner(), "Unauthorized");
         mockPrice = price;
     }
 

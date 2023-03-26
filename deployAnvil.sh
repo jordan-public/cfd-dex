@@ -1,5 +1,4 @@
 #!/bin/zsh
-# Usage: ./push_artifacts.sh <chain_id>
 
 # Run anvil.sh in another shell before running this
 
