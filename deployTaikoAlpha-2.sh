@@ -6,7 +6,7 @@
 source .env
 
 # To deploy and verify our contract
-forge script script/DeployTaikoAlpha-2.s.sol:Deploy --rpc-url "https://rpc.a2.taiko.xyz" --sender $SENDER --private-key $PRIVATE_KEY --broadcast -vvvv
+forge script script/DeployTaikoAlpha-2.s.sol:Deploy --slow --legacy --rpc-url "https://rpc.a2.taiko.xyz" --sender $SENDER --private-key $PRIVATE_KEY --broadcast -vvvv
 
 source push_artifacts.sh "DeployTaikoAlpha-2.s.sol/167004"
 
