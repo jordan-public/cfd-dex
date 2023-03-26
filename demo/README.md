@@ -63,7 +63,7 @@ FlashLiquidate for CNY/USD: 0x1d3f9dEB07dBC53dB803bAEAA412D4aaf012DA6e
 
 ```
 
-![](taiko.jpeg) Taiko Alpha-2:
+![](taiko.jpeg) Taiko Alpha-2 ([click here for web3 app](https://bafybeifmi7asmz7xasqus67n6xrtfxc7aj42ys5ocg3h3s3a3w422ijfey.ipfs.dweb.link)):
 ```
 MUSD: 0x945923132F617Aa5d1bF4E6ea1baCa041Cc9fBEa
 MockPriceFeedOracle: 0xaF4cF2Fdd4518615fCd7C82B1b4a9c5818296C26
@@ -74,11 +74,5 @@ FlashLiquidate for CNY/USD: 0x47a9ebAF9b3C8aE77251249c3ab47FaF0bd46A2e
 ```
 
 ![](zksync.png) zkSync Era Testnet :
-```
-MUSD: 0x945923132F617Aa5d1bF4E6ea1baCa041Cc9fBEa
-MockPriceFeedOracle: 0xaF4cF2Fdd4518615fCd7C82B1b4a9c5818296C26
-CFDOrderBookFactory: 0x913d673428f0c24803EF612213d0760B5799C833
-CFDOrderBook for CNY/USD: 0x7428F21D1Fd609B4FFcE31F75A7b7e233dE562aB
-FlashLiquidate for CNY/USD: 0x47a9ebAF9b3C8aE77251249c3ab47FaF0bd46A2e
 
-```
+This is work in progress. The contracts can be compiled manually, but I have not managed to set up the Foundry toolkit to use the zkSync Era Solidity LLVM compiler.

@@ -9,6 +9,9 @@ tmp/
 web/src/artifacts/
 !web/src/artifacts/.gitkeep
 
+tmp/
+!tmp/.gitkeep
+
 broadcast/DeployAnvil.s.sol/*/*
 #!broadcast/DeployAnvil.s.sol/*/run-latest.json
 broadcast/DeployGnosisChiado.s.sol/*/*
