@@ -2,6 +2,8 @@
 
 ## Video
 
+[Video here](../doc/CFD DEX - HD 720p.mov)
+
 ## Deployments
 
 For instructions on how to deploy the contracts and the front-end on a local development environment, as well as various testnets check [here](../HOWTO.md).
@@ -17,7 +19,7 @@ This is how all the testned deployments look after connecting with a wallet:
 
 Here are the deployed contract addresses (no, it's not a mistake that they are the same on different blockchains - I am using the same addresses, signatures and sequence of deployment):
 
-![](gnosis.jpeg) Gnosis Chiado:
+![](gnosis.jpeg) Gnosis Chiado ([web3 app here](https://bafybeifiszsclbtgvql752uoiy7zj6zyamma54qtvmme6fneya7cgz3vte.ipfs.dweb.link)):
 ```
 MUSD: 0xe7a044e19D5afbB2957740a3Cdc3E295F152CF7E
 MockPriceFeedOracle: 0x945923132F617Aa5d1bF4E6ea1baCa041Cc9fBEa
@@ -26,7 +28,7 @@ CFDOrderBook for CNY/USD: 0xe0C7880061074fC21c4ce3CC9C1a9bF132462af1
 FlashLiquidate for CNY/USD: 0x5213cA4f2dC60E925E8712d4b1f7d2D0976A5617
 ```
 
-![](optimism.jpeg) Optimism Görli:
+![](optimism.jpeg) Optimism Görli([web3 app here](http://bafybeib623jrtyf3gcxkhye3qlllepgsfne6a7lxvbw2xlzwfetaqeby5m.ipfs.localhost:8080/)):
 ```
 MUSD: 0xe7a044e19D5afbB2957740a3Cdc3E295F152CF7E
 MockPriceFeedOracle: 0x945923132F617Aa5d1bF4E6ea1baCa041Cc9fBEa
@@ -35,7 +37,7 @@ CFDOrderBook for CNY/USD: 0xe0C7880061074fC21c4ce3CC9C1a9bF132462af1
 FlashLiquidate for CNY/USD: 0x5213cA4f2dC60E925E8712d4b1f7d2D0976A5617
 ```
 
-![](scroll.png) Scroll Alpha:
+![](scroll.png) Scroll Alpha ([web3 app here](http://bafybeifydbrzsiclxrwmnihjpa2vfyvo7y4cnsyjjvmdjubcslug3vtj2q.ipfs.localhost:8080/)):
 ```
 MUSD: 0xe7a044e19D5afbB2957740a3Cdc3E295F152CF7E
 MockPriceFeedOracle: 0x945923132F617Aa5d1bF4E6ea1baCa041Cc9fBEa
@@ -44,7 +46,7 @@ CFDOrderBook for CNY/USD: 0xe0C7880061074fC21c4ce3CC9C1a9bF132462af1
 FlashLiquidate for CNY/USD: 0x5213cA4f2dC60E925E8712d4b1f7d2D0976A5617
 ```
 
-![](polygon.png) Polygon zkEVM Testnet:
+![](polygon.png) Polygon zkEVM Testnet ([web3 app here](http://bafybeigpoj4bfyrlmlx3ggpm3xurumtsh6bomsn3cwxe3droir6lya6ti4.ipfs.localhost:8080/)):
 ```
 MUSD: 0x945923132F617Aa5d1bF4E6ea1baCa041Cc9fBEa
 MockPriceFeedOracle: 0xaF4cF2Fdd4518615fCd7C82B1b4a9c5818296C26
@@ -53,7 +55,7 @@ CFDOrderBook for CNY/USD: 0x7428F21D1Fd609B4FFcE31F75A7b7e233dE562aB
 FlashLiquidate for CNY/USD: 0x47a9ebAF9b3C8aE77251249c3ab47FaF0bd46A2e
 ```
 
-![](mantle.png) Mantle Testnet:
+![](mantle.png) Mantle Testnet ([web3 app here](http://bafybeibte2ed2t3ukc5cc6j2yoqdjfmfrgbqom5sm5wsfllb6b5lceqqly.ipfs.localhost:8080/)):
 ```
 MUSD: 0x5213cA4f2dC60E925E8712d4b1f7d2D0976A5617
 MockPriceFeedOracle: 0x47a9ebAF9b3C8aE77251249c3ab47FaF0bd46A2e
@@ -63,7 +65,7 @@ FlashLiquidate for CNY/USD: 0x1d3f9dEB07dBC53dB803bAEAA412D4aaf012DA6e
 
 ```
 
-![](taiko.jpeg) Taiko Alpha-2 ([click here for web3 app](https://bafybeifmi7asmz7xasqus67n6xrtfxc7aj42ys5ocg3h3s3a3w422ijfey.ipfs.dweb.link)):
+![](taiko.jpeg) Taiko Alpha-2 ([web3 app here](http://bafybeibirx5o5fmri6cibp4vpeokyd7syztmfjkj2j6pyddxykvmvyyacy.ipfs.localhost:8080/)):
 ```
 MUSD: 0x945923132F617Aa5d1bF4E6ea1baCa041Cc9fBEa
 MockPriceFeedOracle: 0xaF4cF2Fdd4518615fCd7C82B1b4a9c5818296C26
