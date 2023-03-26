@@ -2,7 +2,7 @@
 
 ## Video
 
-Download the video [here](../doc/CFD%20DEX%20-%20HD%20720p.mov) or see it on [YouTube]().
+Download the video [here](../doc/CFD%20DEX%20-%20HD%20720p.mov) or watch it on [YouTube](https://youtu.be/aPenvOYZz5Q).
 
 ## Deployments
 
