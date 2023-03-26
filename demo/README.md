@@ -17,7 +17,7 @@ The contract calls can be conveniently executed from the appropriate blockchain 
 This is how all the testned deployments look after connecting with a wallet:
 ![TestnetFrontEnd](./TestnetFrontEnd-opg.png)
 
-Here are the deployed contract addresses (no, it's not a mistake that they are the same on different blockchains - I am using the same addresses, signatures and sequence of deployment):
+Here are the deployed contract addresses and links to the appropriate IPFS pinned web3 apps (please be veeeery patient and refresh a couple of times, as I am hosting/pinning them from a slow connection):
 
 ![](gnosis.jpeg) Gnosis Chiado ([web3 app here](https://bafybeifiszsclbtgvql752uoiy7zj6zyamma54qtvmme6fneya7cgz3vte.ipfs.dweb.link)):
 ```
