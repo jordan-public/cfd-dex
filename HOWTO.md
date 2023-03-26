@@ -31,10 +31,9 @@ cd web
 pnpm run dev
 ```
 
-Similarly, other scripts can be used to deploy on various testnets. For the deployment scripts for each network see "deploy<Network>.sh". To build static web front end deployable anywhere static content can be served, use:
+Similarly, other scripts can be used to deploy on various testnets. For the deployment scripts for each network see "deploy\<Network\>.sh". To build static web front end deployable anywhere static content can be served, use:
 ```
-cd web
-pnpm tun build
+./buildWeb3Apps.sh
 ```
 Then copy the entire web/.next folder into root folder of the web service content root location.
 
