@@ -9,13 +9,13 @@ Download the video [here](../doc/CFD%20DEX%20-%20HD%20720p.mov) or watch it on [
 For instructions on how to deploy the contracts and the front-end on a local development environment, as well as various testnets check [here](../HOWTO.md).
 
 Most testnets lack the desired Chainlink price feed oracles. Also, it is hard to get large amounts of USDC on testnets for experimentation. To mitigate these problems we have created the following:
-- A mock USD (IERC20 + "mint(uint256)") token with symbol MUSD. Anyone can call the method "mint(uint256 amount)" on the contract to mint any amount of MUSD (up to $2^{50}$). For example, to mint 1 million MUSD in the shell issue the command (but omit the --legacy for blockchains which support EIP-1559, and replace <PRIVATE_KEY>, <RPC> and <MUSD_CONTRACT_ADDRESS> with the proper valuesas listed below):
+- A mock USD (IERC20 + "mint(uint256)") token with symbol MUSD. Anyone can call the method "mint(uint256 amount)" on the contract to mint any amount of MUSD (up to $2^{50}$). For example, to mint 1 million MUSD in the shell issue the command (but omit the "--legacy" for blockchains which support EIP-1559, and replace <PRIVATE_KEY>, <RPC> and <MUSD_CONTRACT_ADDRESS> with the proper valuesas listed below):
 ```
 cast send --private-key <PRIVATE_KEY> --legacy --rpc-url "<RPC>" <MUSD_CONTRACT_ADDRESS> "mint(uint256)()" "1000000000000"
 
 ```
 
-- A mock Chainlink-compatible (AggregatorV3Interface) oracle, which delivers a fixed price for CNY/USD. In order to experiment with the price dynamics, the contract CFDOrderBook provides a method "setMockPrice(uint256 price)" which can be called by anyone to set the oracle price to any value (in 8 decimal places). To reset it to the default value, call "setMockPrice(0)". For example, to mock (change) the price of CNY/USD to 0.16 in the shell issue the command (but omit the --legacy for blockchains which support EIP-1559, and replace <PRIVATE_KEY>, <RPC> and <CFD_ORDER_BOOK_CONTRACT_ADDRESS> with the proper values as listed below):
+- A mock Chainlink-compatible (AggregatorV3Interface) oracle, which delivers a fixed price for CNY/USD. In order to experiment with the price dynamics, the contract CFDOrderBook provides a method "setMockPrice(uint256 price)" which can be called by anyone to set the oracle price to any value (in 8 decimal places). To reset it to the default value, call "setMockPrice(0)". For example, to mock (change) the price of CNY/USD to 0.16 in the shell issue the command (but omit the "--legacy" for blockchains which support EIP-1559, and replace <PRIVATE_KEY>, <RPC> and <CFD_ORDER_BOOK_CONTRACT_ADDRESS> with the proper values as listed below):
 ```
 cast send --private-key <PRIVATE_KEY>  --legacy --rpc-url "<RPC>" <CFD_ORDER_BOOK_CONTRACT_ADDRESS> "setMockPrice(uint256)()" "16000000"
 
