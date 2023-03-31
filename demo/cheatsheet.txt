@@ -11,7 +11,7 @@ cast send --private-key $PRIVATE_KEY --legacy --rpc-url "https://rpc.public.zkev
 
 Enter postion 6.5M CNY/USD in account 4
 
-Change CNY / USD to 0.16
+Change CNY / USD to 0.16cast 
 cast send --private-key $PRIVATE_KEY  --legacy --rpc-url "https://rpc.public.zkevm-test.net" 0x7428F21D1Fd609B4FFcE31F75A7b7e233dE562aB "setMockPrice(uint256)()" "16000000"
 
 Liquidate using account 5
