@@ -1,0 +1,17 @@
+-------- PREPARATION ----------
+
+CFD DEX web3 dapp on zkEVM:
+https://bafybeigpoj4bfyrlmlx3ggpm3xurumtsh6bomsn3cwxe3droir6lya6ti4.ipfs.dweb.link/
+
+Create BUSD on zkEVM:
+source .env
+cast send --private-key $PRIVATE_KEY --legacy --rpc-url "https://rpc.public.zkevm-test.net" 0x945923132F617Aa5d1bF4E6ea1baCa041Cc9fBEa "mint(uint256)()" "1000000000000"
+
+--------- DEMO STARTS HERE -----------
+
+Enter postion 6.5M CNY/USD in account 4
+
+Change CNY / USD to 0.16
+cast send --private-key $PRIVATE_KEY  --legacy --rpc-url "https://rpc.public.zkevm-test.net" 0x7428F21D1Fd609B4FFcE31F75A7b7e233dE562aB "setMockPrice(uint256)()" "16000000"
+
+Liquidate using account 5
