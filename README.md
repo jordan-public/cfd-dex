@@ -1,3 +1,17 @@
+[This project](https://ethglobal.com/showcase/cfd-dex-and-flash-trillions-ad666) won the following prizes at the [ETHGlobal Scaling Ethereum 2023](https://ethglobal.com/events/scaling2023) hackathon:
+
+💡 Polygon — Best dApp Deployed on Polygon zkEVM
+
+🔴 Optimism — Just Deploy!
+
+🥇 Mantle — Best Use
+
+🥈 Taiko — Best Dapp
+
+📜 Scroll — Just Deploy!
+
+🏆 Scaling Ethereum Finalist
+
 # Ccontracts for Difference Decetralized Exchange and 
 # Flash Collaterals - more powerful than Flash Loans
 
