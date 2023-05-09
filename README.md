@@ -2,15 +2,15 @@
 
 💡 Polygon — Best dApp Deployed on Polygon zkEVM
 
-🔴 Optimism — Just Deploy!
+🔴 [Optimism — Just Deploy!](https://ethglobal.com/showcase/cfd-dex-and-flash-trillions-ad666)
 
-🥇 Mantle — Best Use
+🥇 [Mantle — Best Use](https://ethglobal.com/showcase/cfd-dex-and-flash-trillions-ad666)
 
-🥈 Taiko — Best Dapp
+🥈 [Taiko — Best Dapp](https://ethglobal.com/showcase/cfd-dex-and-flash-trillions-ad666)
 
-📜 Scroll — Just Deploy!
+📜 [Scroll — Just Deploy!](https://ethglobal.com/showcase/cfd-dex-and-flash-trillions-ad666)
 
-🏆 Scaling Ethereum Finalist
+🏆 [Scaling Ethereum Finalist](https://ethglobal.com/showcase/cfd-dex-and-flash-trillions-ad666)
 
 # Ccontracts for Difference Decetralized Exchange and 
 # Flash Collaterals - more powerful than Flash Loans
