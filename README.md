@@ -1,4 +1,4 @@
-[This project](https://ethglobal.com/showcase/cfd-dex-and-flash-trillions-ad666) won the following prizes at the [ETHGlobal Scaling Ethereum 2023](https://ethglobal.com/events/scaling2023) hackathon:
+[This project](https://ethglobal.com/showcase/cfd-dex-and-flash-trillions-ad666) won the following prizes at the [Scaling Ethereum 2023](https://ethglobal.com/events/scaling2023) hackathon:
 
 💡 [Polygon — Best dApp Deployed on Polygon zkEVM](https://ethglobal.com/showcase/cfd-dex-and-flash-trillions-ad666)
 
